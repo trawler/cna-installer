@@ -22,8 +22,9 @@ type TfPlanParams struct {
 	VarFile     []*string
 }
 
-// NewTfPlanParams comment
-func NewTfPlanParams() *TfPlanParams {
+// NewTerraformPlanParams function accepts a pointer to a TfPlanParams
+// structure and returns its address
+func NewTerraformPlanParams() *TfPlanParams {
 	return &TfPlanParams{}
 }
 
