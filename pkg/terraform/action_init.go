@@ -22,12 +22,14 @@ type TfInitParams struct {
 	VerifyPlugins *bool
 }
 
-// NewTerraformInitParams comment
+// NewTerraformInitParams function accepts a pointer to a TfInitParams
+// structure and returns its address
 func NewTerraformInitParams() *TfInitParams {
 	return &TfInitParams{}
 }
 
-// Opts comment
+// Opts method accepts a pointer to TfInitParams and populates it
+// with default values.
 func (p *TfInitParams) Opts() map[string][]string {
 	opts := make(map[string][]string)
 

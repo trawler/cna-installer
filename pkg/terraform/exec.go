@@ -2,7 +2,6 @@ package terraform
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -53,7 +52,7 @@ func NewTerraformClient(workingDirectory string) (*Executor, error) {
 	return ex, nil
 }
 
-// Init comment
+// Init runs "terraform init" action
 func (cli *Executor) Init(params *TfInitParams) *TfAction {
 	return &TfAction{
 		action: "init",
@@ -63,10 +62,8 @@ func (cli *Executor) Init(params *TfInitParams) *TfAction {
 	}
 }
 
-// Plan comment
+// Plan runs "terraform plan" action
 func (cli *Executor) Plan(params *TfPlanParams) *TfAction {
-	fmt.Println("running Plan")
-
 	return &TfAction{
 		action: "plan",
 		bin:    cli,
@@ -75,7 +72,7 @@ func (cli *Executor) Plan(params *TfPlanParams) *TfAction {
 	}
 }
 
-// Apply comment
+// Apply runs "terraform apply" action
 func (cli *Executor) Apply() *TfAction {
 	return &TfAction{
 		action: "apply",
