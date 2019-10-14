@@ -2,26 +2,6 @@ package terraform
 
 import "strconv"
 
-// TfPlanParams comment
-type TfPlanParams struct {
-	Destroy          bool
-	DetailedExitcode bool
-
-	Input       *bool
-	Lock        *bool
-	LockTimeout int
-	NoColor     bool
-
-	ModuleDepth *int
-	Out         *string
-	Parallelism *int
-	Refresh     *bool
-	State       *string
-	Target      []*string
-	Var         map[string]string
-	VarFile     []*string
-}
-
 // NewTerraformPlanParams function accepts a pointer to a TfPlanParams
 // structure and returns its address
 func NewTerraformPlanParams() *TfPlanParams {
@@ -31,6 +11,10 @@ func NewTerraformPlanParams() *TfPlanParams {
 // Opts comment
 func (p *TfPlanParams) Opts() map[string][]string {
 	opts := make(map[string][]string)
+
+	if p.AutoApprove {
+		opts["auto-approve"] = []string{"true"}
+	}
 
 	if p.Destroy {
 		opts["destroy"] = []string{""}
