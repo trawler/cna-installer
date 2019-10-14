@@ -57,6 +57,7 @@ func initConfig() {
 	// Parse the config file into a Cluster struct
 	cluster, err = terraform.ParseConfigFile(cfgFile)
 	if err != nil {
+		fmt.Printf("Error: failed to parse config file: %v", err)
 		os.Exit(1)
 	}
 }

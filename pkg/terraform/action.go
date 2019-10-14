@@ -1,28 +1,12 @@
 package terraform
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"sort"
 	"strings"
 )
-
-// TfActionParams comment
-type TfActionParams interface {
-	Opts() map[string][]string
-	OptsString() string
-	OptsStringSlice() []string
-}
-
-// TfAction comment
-type TfAction struct {
-	Cmd    *exec.Cmd
-	Dir    string
-	action string
-	bin    *Executor
-	opts   map[string]string
-	params TfActionParams
-}
 
 // Initialise comment
 func (a *TfAction) Initialise() *TfAction {
@@ -40,8 +24,17 @@ func (a *TfAction) Initialise() *TfAction {
 
 // Run the terraform command
 func (a *TfAction) Run() (err error) {
-	a.Cmd.Start()
-	return a.Cmd.Wait()
+	err = a.Cmd.Start()
+	if err != nil {
+		return fmt.Errorf("Error starting command: terraform %v: %v", a.action, err)
+	}
+
+	err = a.Cmd.Wait()
+	if err != nil {
+		return fmt.Errorf("Failed to complete command: terraform %v: %v", a.action, err)
+	}
+
+	return nil
 }
 
 // BoolPtr comment

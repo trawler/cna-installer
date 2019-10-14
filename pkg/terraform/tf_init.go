@@ -2,26 +2,6 @@ package terraform
 
 import "strconv"
 
-// TfInitParams comment
-type TfInitParams struct {
-	Backend       *bool
-	BackendConfig string
-	ForceCopy     bool
-	FromModule    string
-	Get           *bool
-	GetPlugins    *bool
-
-	Input       *bool
-	Lock        *bool
-	LockTimeout int
-	NoColor     bool
-
-	PluginDir     string
-	Reconfigure   bool
-	Upgrade       *bool
-	VerifyPlugins *bool
-}
-
 // NewTerraformInitParams function accepts a pointer to a TfInitParams
 // structure and returns its address
 func NewTerraformInitParams() *TfInitParams {

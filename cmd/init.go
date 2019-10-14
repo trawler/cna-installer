@@ -55,11 +55,19 @@ func initBackend() error {
 	init.Run()
 
 	// Run terraform plan
-
 	planParams := terraform.NewTerraformPlanParams()
 	planParams.Opts()
 	plan := tf.Plan(planParams)
 	plan.Initialise()
-	plan.Run()
+	err = plan.Run()
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
+	// Run terraform apply
+	apply := tf.Apply(planParams)
+	apply.Initialise()
+	apply.Run()
+
 	return nil
 }

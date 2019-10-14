@@ -57,8 +57,8 @@ func (cli *Executor) Init(params *TfInitParams) *TfAction {
 	return &TfAction{
 		action: "init",
 		bin:    cli,
-		params: params,
 		Dir:    cli.workingDirectory,
+		params: params,
 	}
 }
 
@@ -67,17 +67,22 @@ func (cli *Executor) Plan(params *TfPlanParams) *TfAction {
 	return &TfAction{
 		action: "plan",
 		bin:    cli,
-		params: params,
 		Dir:    cli.workingDirectory,
+		params: params,
 	}
 }
 
 // Apply runs "terraform apply" action
-func (cli *Executor) Apply() *TfAction {
+func (cli *Executor) Apply(params *TfPlanParams) *TfAction {
+	// set auto-approve to true for apply actions
+	if params.AutoApprove == false {
+		params.AutoApprove = true
+	}
 	return &TfAction{
 		action: "apply",
 		bin:    cli,
 		Dir:    cli.workingDirectory,
+		params: params,
 	}
 }
 

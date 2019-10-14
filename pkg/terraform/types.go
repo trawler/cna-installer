@@ -1,5 +1,7 @@
 package terraform
 
+import "os/exec"
+
 // Cluster defines the config for a cluster.
 type Cluster struct {
 	TfAzureVars  TfAzureVars  `json:",inline" yaml:"azure,omitempty"`
@@ -24,4 +26,77 @@ type TfAzureVars struct {
 	OSType           string `json:",inline" yaml:"agentOSType,omitempty"`
 	ResourceGroup    string
 	VMSize           string `json:",inline" yaml:"agentVMSize,omitempty"`
+}
+
+// TfInitParams is a struct that holds terraform init parameters
+type TfInitParams struct {
+	Backend       *bool
+	BackendConfig string
+	ForceCopy     bool
+	FromModule    string
+	Get           *bool
+	GetPlugins    *bool
+	Input         *bool
+	Lock          *bool
+	LockTimeout   int
+	NoColor       bool
+	PluginDir     string
+	Reconfigure   bool
+	Upgrade       *bool
+	VerifyPlugins *bool
+}
+
+// TfPlanParams is a struct that holds terraform plan parameters
+type TfPlanParams struct {
+	AutoApprove      bool
+	Destroy          bool
+	DetailedExitcode bool
+	Input            *bool
+	Lock             *bool
+	LockTimeout      int
+	NoColor          bool
+	ModuleDepth      *int
+	Out              *string
+	Parallelism      *int
+	Refresh          *bool
+	State            *string
+	Target           []*string
+	Var              map[string]string
+	VarFile          []*string
+}
+
+// TFApply is a struct that holds terraform apply parameters
+type TFApply struct {
+	AutoApprove      *bool
+	Destroy          bool
+	DetailedExitcode bool
+	Input            *bool
+	Lock             *bool
+	LockTimeout      int
+	NoColor          bool
+	ModuleDepth      *int
+	Out              *string
+	Parallelism      *int
+	Refresh          *bool
+	State            *string
+	Target           []*string
+	Var              map[string]string
+	VarFile          []*string
+}
+
+// TfActionParams comment
+type TfActionParams interface {
+	Opts() map[string][]string
+	OptsString() string
+	OptsStringSlice() []string
+}
+
+// TfAction comment
+type TfAction struct {
+	Cmd    *exec.Cmd
+	Dir    string
+	action string
+	bin    *Executor
+	opts   map[string]string
+	params TfActionParams
 }
