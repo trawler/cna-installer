@@ -11,10 +11,9 @@ import (
 // Initialise comment
 func (a *TfAction) Initialise() *TfAction {
 	args := append([]string{a.action}, a.params.OptsStringSlice()...)
+	args = append(args, a.executionPath)
+
 	a.Cmd = exec.Command(a.bin.binaryPath, args...)
-	if a.Dir != "" {
-		a.Cmd.Dir = a.Dir
-	}
 
 	a.Cmd.Stdout = os.Stdout
 	a.Cmd.Stderr = os.Stderr

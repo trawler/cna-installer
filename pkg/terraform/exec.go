@@ -14,10 +14,6 @@ var ErrBinaryNotFound = errors.New(
 	"TerraForm not in executable's folder, cwd nor PATH",
 )
 
-const (
-	logsFolderName = "logs"
-)
-
 // Executor enables calling TerraForm from Go, across platforms, with any
 // additional providers/provisioners that the currently executing binary
 // exposes.
@@ -32,16 +28,18 @@ const (
 // than importing the `github.com/hashicorp/terraform` library and calling methods
 // directly. See https://github.com/hashicorp/terraform/issues/12582 for more info.
 type Executor struct {
-	binaryPath       string
-	version          string
-	workingDirectory string
-	envVariables     map[string]string
+	binaryPath    string
+	version       string
+	executionPath string
+	logDir        string
+	envVariables  map[string]string
 }
 
 // NewTerraformClient return a struct which behaves like the cli terraform client.
-func NewTerraformClient(workingDirectory string) (*Executor, error) {
+func NewTerraformClient(executionPath string, logDir string) (*Executor, error) {
 	ex := new(Executor)
-	ex.workingDirectory = workingDirectory
+	ex.executionPath = executionPath
+	ex.logDir = logDir
 
 	// Find the TerraForm binary.
 	out, err := tfBinaryPath()
@@ -55,20 +53,20 @@ func NewTerraformClient(workingDirectory string) (*Executor, error) {
 // Init runs "terraform init" action
 func (cli *Executor) Init(params *TfInitParams) *TfAction {
 	return &TfAction{
-		action: "init",
-		bin:    cli,
-		Dir:    cli.workingDirectory,
-		params: params,
+		action:        "init",
+		bin:           cli,
+		executionPath: cli.executionPath,
+		params:        params,
 	}
 }
 
 // Plan runs "terraform plan" action
 func (cli *Executor) Plan(params *TfPlanParams) *TfAction {
 	return &TfAction{
-		action: "plan",
-		bin:    cli,
-		Dir:    cli.workingDirectory,
-		params: params,
+		action:        "plan",
+		bin:           cli,
+		executionPath: cli.executionPath,
+		params:        params,
 	}
 }
 
@@ -79,10 +77,10 @@ func (cli *Executor) Apply(params *TfPlanParams) *TfAction {
 		params.AutoApprove = true
 	}
 	return &TfAction{
-		action: "apply",
-		bin:    cli,
-		Dir:    cli.workingDirectory,
-		params: params,
+		action:        "apply",
+		bin:           cli,
+		executionPath: cli.executionPath,
+		params:        params,
 	}
 }
 
@@ -96,7 +94,6 @@ func (cli *Executor) fetchVersion() {
 // - in the PATH.
 // The first to be found is the one returned.
 func tfBinaryPath() (string, error) {
-	// Depending on the platform, the expected binary name is different.
 	binaryFileName := "terraform"
 
 	// Look into the executable's folder.

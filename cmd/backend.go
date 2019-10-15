@@ -7,6 +7,8 @@ import (
 	"github.com/trawler/cna-installer/pkg/terraform"
 )
 
+var stateFileName string
+
 // backendCmd represents the backend command
 var backendCmd = &cobra.Command{
 	Use:   "backend",
@@ -45,8 +47,6 @@ to quickly create a Cobra application.`,
 	},
 }
 
-var err error
-
 func init() {
 	rootCmd.AddCommand(backendCmd)
 	backendCmd.AddCommand(backendInitCmd)
@@ -57,6 +57,9 @@ func initBackend() error {
 	if cluster.TfAzureVars.ClientID != "" && cluster.TfAzureVars.ClientSecret != "" {
 		return fmt.Errorf("clientID AND clientSecret seem to be configured.\nAre you sure you need to set-up a new one? ")
 	}
+	// Get the logDir path and direct tf output to state file
+	logDir, err = getLogDir()
+	stateFileName, _ = stateFile("backend")
 
 	// Populate TF_VAR Environment variables
 	err = terraform.GetEnvVars(cluster)
@@ -64,8 +67,9 @@ func initBackend() error {
 		return fmt.Errorf("%v", err)
 	}
 
-	workDir := "data/terraform/tf-backend"
-	tf, err := terraform.NewTerraformClient(workDir)
+	// Set the executionPath for the terraform backend config
+	executionPath := "../data/terraform/tf-backend"
+	tf, err := terraform.NewTerraformClient(executionPath, logDir)
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
@@ -81,6 +85,8 @@ func initBackend() error {
 	// Run terraform plan
 	planParams := terraform.NewTerraformPlanParams()
 	planParams.Opts()
+	planParams.State = &stateFileName
+
 	plan := tf.Plan(planParams)
 	plan.Initialise()
 	err = plan.Run()
