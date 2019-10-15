@@ -93,10 +93,10 @@ type TfActionParams interface {
 
 // TfAction comment
 type TfAction struct {
-	Cmd    *exec.Cmd
-	Dir    string
-	action string
-	bin    *Executor
-	opts   map[string]string
-	params TfActionParams
+	action        string
+	bin           *Executor
+	Cmd           *exec.Cmd
+	executionPath string
+	opts          map[string]string
+	params        TfActionParams
 }

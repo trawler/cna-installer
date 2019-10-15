@@ -6,16 +6,19 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
+	"path/filepath"
 
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/trawler/cna-installer/pkg/terraform"
 )
 
 var cfgFile string
 var cluster *terraform.Cluster
+var err error
+var logDir string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -29,8 +32,7 @@ kubernetes cluster with the CNA stack applications.`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
 
@@ -42,14 +44,11 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	var err error
-
 	// If no config file was provided, try to use the default config file.
 	if cfgFile == "" {
-		home, err := homedir.Dir()
+		home, err := getHomeDir()
 		if err != nil {
-			fmt.Printf("%v", err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 		cfgFile = path.Join(home, ".cna-installer.yaml")
 	}
@@ -57,7 +56,29 @@ func initConfig() {
 	// Parse the config file into a Cluster struct
 	cluster, err = terraform.ParseConfigFile(cfgFile)
 	if err != nil {
-		fmt.Printf("Error: failed to parse config file: %v", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
+}
+
+func stateFile(tfName string) (string, error) {
+	dir, err := getLogDir()
+	statefileName := filepath.Join(dir, fmt.Sprintf("%s_terraform.tfstate", tfName))
+	return statefileName, err
+}
+
+func getLogDir() (string, error) {
+	// Get the current executing dir
+	logDir, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("cannot get running dir: %v", err)
+	}
+	return logDir, nil
+}
+
+func getHomeDir() (string, error) {
+	home := os.Getenv("HOME")
+	if home == "" {
+		return "", fmt.Errorf("cannot get home dir. is $HOME set in your environment? \n%v", err)
+	}
+	return home, nil
 }
