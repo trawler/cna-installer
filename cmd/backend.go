@@ -7,10 +7,17 @@ import (
 	"github.com/trawler/cna-installer/pkg/terraform"
 )
 
-var err error
+// backendCmd represents the backend command
+var backendCmd = &cobra.Command{
+	Use:   "backend",
+	Short: "Manage the remote backend",
+	Long: `
+Create or destroy a remote backend, where the terraform
+state is saved. If you already have a remote backend set up, this step
+can be skipped.`,
+}
 
-// initCmd represents the init command
-var initCmd = &cobra.Command{
+var backendInitCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize a remote backend for the Installer, if it does not exist.",
 	Long: `
@@ -24,9 +31,26 @@ If you already have a remote backend, this step can be skipped.`,
 	},
 }
 
+var backendDestroyCmd = &cobra.Command{
+	Use:   "destroy",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("backend init called")
+	},
+}
+
+var err error
+
 func init() {
-	rootCmd.AddCommand(initCmd)
-	initCmd.Flags().Bool("remote-backend", true, "Create terraform's Remote Backend")
+	rootCmd.AddCommand(backendCmd)
+	backendCmd.AddCommand(backendInitCmd)
+	backendCmd.AddCommand(backendDestroyCmd)
 }
 
 func initBackend() error {
