@@ -79,6 +79,8 @@ func initWorkspace() error {
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
+	// set the location of the state File
+	planParams.State = &stateFileName
 
 	return nil
 }
@@ -95,8 +97,6 @@ func initBackend() error {
 
 	// Run terraform plan
 	planParams.Opts()
-	planParams.State = &stateFileName
-
 	plan := tf.Plan(planParams)
 	plan.Initialise()
 
@@ -107,7 +107,10 @@ func initBackend() error {
 	// Run terraform apply
 	apply := tf.Apply(planParams)
 	apply.Initialise()
-	apply.Run()
+
+	if err = apply.Run(); err != nil {
+		return fmt.Errorf("%v", err)
+	}
 
 	return nil
 }
@@ -115,7 +118,11 @@ func initBackend() error {
 func destroyBackend() error {
 	destroy := tf.Destroy(planParams)
 	destroy.Initialise()
-	destroy.Run()
+
+	if err = destroy.Run(); err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
 	return nil
 }
 
