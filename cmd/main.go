@@ -59,7 +59,7 @@ func initConfig() {
 	}
 }
 
-func stateFile(tfName string) (string, error) {
+func getStateFile(tfName string) (string, error) {
 	dir, err := getLogDir()
 	statefileName := filepath.Join(dir, fmt.Sprintf("%s_terraform.tfstate", tfName))
 	return statefileName, err

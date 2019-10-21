@@ -28,6 +28,15 @@ type TfAzureVars struct {
 	VMSize           string `json:",inline" yaml:"agentVMSize,omitempty"`
 }
 
+// AzureAuth holds the required fields for Azure authentication
+type AzureAuth struct {
+	SubsctiptionID   string
+	ClientID         string
+	ClientSecret     string
+	TenantID         string
+	BackendAccessKey string
+}
+
 // TfInitParams is a struct that holds terraform init parameters
 type TfInitParams struct {
 	Backend       *bool

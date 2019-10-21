@@ -30,6 +30,12 @@ var defaultCluster = &Cluster{
 // GetEnvVars get a cluster structure, and exports it
 // to terraform environment variables
 func GetEnvVars(c *Cluster) error {
+	auth := new(AzureAuth)
+	err := verifyAuth(auth)
+	if err != nil {
+		return fmt.Errorf("Failed to verify auth: %v", err)
+	}
+
 	if c.TfConfigVars.BaseDomain == "" {
 		return fmt.Errorf("baseDomain is not set")
 	}
@@ -73,4 +79,27 @@ func ParseConfigFile(path string) (*Cluster, error) {
 		return nil, fmt.Errorf("unable to read file: %v", path)
 	}
 	return ParseConfig(data)
+}
+
+func verifyAuth(a *AzureAuth) error {
+	a.ClientID = os.Getenv("ARM_CLIENT_ID")
+	if a.ClientID == "" {
+		return fmt.Errorf("ARM_CLIENT_ID is not set")
+	}
+
+	a.ClientSecret = os.Getenv("ARM_CLIENT_SECRET")
+	if a.ClientSecret == "" {
+		return fmt.Errorf("ARM_CLIENT_SECRET is not set")
+	}
+
+	a.TenantID = os.Getenv("ARM_TENANT_ID")
+	if a.TenantID == "" {
+		return fmt.Errorf("ARM_TENANT_ID is not set")
+	}
+
+	a.SubsctiptionID = os.Getenv("ARM_SUBSCRIPTION_ID")
+	if a.SubsctiptionID == "" {
+		return fmt.Errorf("ARM_SUBSCRIPTION_ID is not set")
+	}
+	return nil
 }

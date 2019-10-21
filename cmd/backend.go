@@ -2,12 +2,17 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/trawler/cna-installer/pkg/terraform"
 )
 
 var stateFileName string
+var tf *terraform.Executor
+
+var initParams = terraform.NewTerraformInitParams()
+var planParams = terraform.NewTerraformPlanParams()
 
 // backendCmd represents the backend command
 var backendCmd = &cobra.Command{
@@ -26,9 +31,13 @@ var backendInitCmd = &cobra.Command{
 Create and generate the remote backend required for installation.
 If you already have a remote backend, this step can be skipped.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := initBackend()
-		if err != nil {
+		if err := initWorkspace(); err != nil {
+			fmt.Printf("failed to initialize environment: %v\n", err)
+			os.Exit(1)
+		}
+		if err := initBackend(); err != nil {
 			fmt.Printf("Error initializing backend:\n%v\n", err)
+			os.Exit(1)
 		}
 	},
 }
@@ -43,54 +52,55 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("backend init called")
+		if err := initWorkspace(); err != nil {
+			fmt.Printf("failed to initialize environment: %v\n", err)
+			os.Exit(1)
+		}
+		if err := destroyBackend(); err != nil {
+			fmt.Printf("Error destroying backend:\n%v\n", err)
+			os.Exit(1)
+		}
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(backendCmd)
-	backendCmd.AddCommand(backendInitCmd)
-	backendCmd.AddCommand(backendDestroyCmd)
-}
-
-func initBackend() error {
-	if cluster.TfAzureVars.ClientID != "" && cluster.TfAzureVars.ClientSecret != "" {
-		return fmt.Errorf("clientID AND clientSecret seem to be configured.\nAre you sure you need to set-up a new one? ")
-	}
+func initWorkspace() error {
 	// Get the logDir path and direct tf output to state file
 	logDir, err = getLogDir()
-	stateFileName, _ = stateFile("backend")
+	stateFileName, _ = getStateFile("backend")
 
 	// Populate TF_VAR Environment variables
-	err = terraform.GetEnvVars(cluster)
-	if err != nil {
+	if err = terraform.GetEnvVars(cluster); err != nil {
 		return fmt.Errorf("%v", err)
 	}
 
 	// Set the executionPath for the terraform backend config
 	executionPath := "../data/terraform/tf-backend"
-	tf, err := terraform.NewTerraformClient(executionPath, logDir)
+	tf, err = terraform.NewTerraformClient(executionPath, logDir)
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
 
-	initParams := terraform.NewTerraformInitParams()
+	return nil
+}
+
+func initBackend() error {
+	// Get Init opts
 	initParams.Opts()
 
 	// Run terraform init
 	init := tf.Init(initParams)
+
 	init.Initialise()
 	init.Run()
 
 	// Run terraform plan
-	planParams := terraform.NewTerraformPlanParams()
 	planParams.Opts()
 	planParams.State = &stateFileName
 
 	plan := tf.Plan(planParams)
 	plan.Initialise()
-	err = plan.Run()
-	if err != nil {
+
+	if err = plan.Run(); err != nil {
 		return fmt.Errorf("%v", err)
 	}
 
@@ -100,4 +110,17 @@ func initBackend() error {
 	apply.Run()
 
 	return nil
+}
+
+func destroyBackend() error {
+	destroy := tf.Destroy(planParams)
+	destroy.Initialise()
+	destroy.Run()
+	return nil
+}
+
+func init() {
+	rootCmd.AddCommand(backendCmd)
+	backendCmd.AddCommand(backendInitCmd)
+	backendCmd.AddCommand(backendDestroyCmd)
 }
