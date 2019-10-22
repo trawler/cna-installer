@@ -2,6 +2,83 @@
 
 
 [[projects]]
+  digest = "1:90afd0cfdffcc3df7855160ee2954cbca286e23c4eb9cb3d075536c9e4e1b04f"
+  name = "github.com/agext/levenshtein"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "0ded9c86537917af2ff89bc9c78de6bd58477894"
+  version = "v1.2.2"
+
+[[projects]]
+  digest = "1:2bf7da77216264bb61bd8cb5f3380a03ab509e8a826fe359008d4a6ba0789b13"
+  name = "github.com/apparentlymart/go-textseg"
+  packages = ["textseg"]
+  pruneopts = "UT"
+  revision = "fb01f485ebef760e5ee06d55e1b07534dda2d295"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:0ade334594e69404d80d9d323445d2297ff8161637f9b2d347cc6973d2d6f05b"
+  name = "github.com/hashicorp/errwrap"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "8a6fb523712970c966eefc6b39ed2c5e74880354"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:f668349b83f7d779567c880550534addeca7ebadfdcf44b0b9c39be61864b4b7"
+  name = "github.com/hashicorp/go-multierror"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "886a7fbe3eb1c874d46f623bfa70af45f425b3d1"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:88e0b0baeb9072f0a4afbcf12dda615fc8be001d1802357538591155998da21b"
+  name = "github.com/hashicorp/go-version"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ac23dc3fea5d1a983c43f6a0f6e2c13f0195d8bd"
+  version = "v1.2.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:1e9da37690dba4fc85324b1a5c9b919c5be7804245deaa27ff0af59e944296d2"
+  name = "github.com/hashicorp/hcl2"
+  packages = [
+    "hcl",
+    "hcl/hclsyntax",
+    "hcldec",
+  ]
+  pruneopts = "UT"
+  revision = "fb75b3253c80b3bc7ca99c4bfa2ad6743841b1af"
+
+[[projects]]
+  branch = "master"
+  digest = "1:7a0c75c83ef1377300a29045c4e7a833b3b6074324e517273fc6a8e2b35d11d6"
+  name = "github.com/hashicorp/hil"
+  packages = ["ast"]
+  pruneopts = "UT"
+  revision = "97b3a9cdfa9349086cfad7ea2fe3165bfe3cbf63"
+
+[[projects]]
+  digest = "1:b3fc53062cc7338aff2509bea775dd27faaba21edfb060f82f31181cecd90861"
+  name = "github.com/hashicorp/terraform"
+  packages = [
+    "addrs",
+    "configs/configschema",
+    "configs/hcl2shim",
+    "helper/didyoumean",
+    "states",
+    "states/statefile",
+    "tfdiags",
+    "version",
+  ]
+  pruneopts = "UT"
+  revision = "abec0acf40d8e31ac612a244cf3886fb3bcce0bb"
+  version = "v0.12.9"
+
+[[projects]]
   digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
   name = "github.com/inconshreveable/mousetrap"
   packages = ["."]
@@ -18,12 +95,36 @@
   revision = "2bc1f35cddc0cc527b4bc3dce8578fc2a6c11384"
 
 [[projects]]
-  digest = "1:5d231480e1c64a726869bc4142d270184c419749d34f167646baa21008eb0a79"
-  name = "github.com/mitchellh/go-homedir"
+  digest = "1:09ca328575f38b80969ccf857f6d7302f2ce09d53778ea7aaba526cfd2cec739"
+  name = "github.com/mitchellh/copystructure"
   packages = ["."]
   pruneopts = "UT"
-  revision = "af06845cf3004701891bf4fdb884bfe4920b3727"
-  version = "v1.1.0"
+  revision = "9a1b6f44e8da0e0e374624fb0a825a231b00c537"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:abf08734a6527df70ed361d7c369fb580e6840d8f7a6012e5f609fdfd93b4e48"
+  name = "github.com/mitchellh/go-wordwrap"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9e67c67572bc5dd02aef930e2b0ae3c02a4b5a5c"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:2a7e6f8bebdca6bd8bc359c37f01ae1c4ea4f8481eaabf93b1ae4863f15b72c7"
+  name = "github.com/mitchellh/reflectwalk"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "3e2c75dfad4fbf904b58782a80fd595c760ad185"
+  version = "v1.0.1"
+
+[[projects]]
+  digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
 
 [[projects]]
   digest = "1:e096613fb7cf34743d49af87d197663cfccd61876e2219853005a57baedfa562"
@@ -42,6 +143,37 @@
   version = "v1.0.5"
 
 [[projects]]
+  digest = "1:0d7e9435e3886a7e8e1c590d4de4d02b7c4b5e0eda082bc94936a23f03b56c47"
+  name = "github.com/zclconf/go-cty"
+  packages = [
+    "cty",
+    "cty/convert",
+    "cty/function",
+    "cty/function/stdlib",
+    "cty/gocty",
+    "cty/json",
+    "cty/set",
+  ]
+  pruneopts = "UT"
+  revision = "01e2a242a65eb6f8ee372ddcea68c111fd4da15e"
+  version = "v1.1.0"
+
+[[projects]]
+  digest = "1:1093f2eb4b344996604f7d8b29a16c5b22ab9e1b25652140d3fede39f640d5cd"
+  name = "golang.org/x/text"
+  packages = [
+    "internal/gen",
+    "internal/triegen",
+    "internal/ucd",
+    "transform",
+    "unicode/cldr",
+    "unicode/norm",
+  ]
+  pruneopts = "UT"
+  revision = "342b2e1fbaa52c93f31447ad2c6abc048c63e475"
+  version = "v0.3.2"
+
+[[projects]]
   digest = "1:59f10c1537d2199d9115d946927fe31165959a95190849c82ff11e05803528b0"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -53,8 +185,9 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/hashicorp/terraform/states/statefile",
     "github.com/kardianos/osext",
-    "github.com/mitchellh/go-homedir",
+    "github.com/pkg/errors",
     "github.com/spf13/cobra",
     "gopkg.in/yaml.v2",
   ]
