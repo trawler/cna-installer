@@ -16,6 +16,9 @@ var cluster *terraform.Cluster
 var err error
 var logDir string
 
+var stateFileName string
+var tf *terraform.Executor
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cna-installer",
@@ -55,15 +58,15 @@ func initConfig() {
 	}
 }
 
-func getStateFile(tfName string) (string, error) {
+func getStateFilePath(tfName string) (string, error) {
 	dir, err := getLogDir()
+
 	statefileName := filepath.Join(dir, fmt.Sprintf("%s_terraform.tfstate", tfName))
 	return statefileName, err
 }
 
 func getLogDir() (string, error) {
-	// Get the current executing dir
-	logDir, err := os.Getwd()
+	logDir, err := filepath.Abs("../logs")
 	if err != nil {
 		return "", fmt.Errorf("cannot get running dir: %v", err)
 	}
