@@ -8,7 +8,7 @@ Usage:
 
 Available Commands:
   backend     Manage the remote backend
-  create      A brief description of your command
+  cluster     Create a Cluster
   help        Help about any command
 
 Flags:
@@ -16,15 +16,18 @@ Flags:
   -h, --help            help for cna-installer
 
 Use "cna-installer [command] --help" for more information about a command.
-
 ```
 ## Getting Started
 ### Building the Installer
-1. Create a build directory: under the root directory of the repository, create a directory named `build`. This directory will hold the executing binary, as well as any tfstate files and generated assets.
-```$ mkdir build```
 
-2. Build the go binary from the source's root directory:
-```$ go build -o build/cna-installer && cd build```
+```
+$ git clone git@github.com:trawler/cna-installer.git
+$ cd cna-installer
+$ make build
+```
+
+The binary is built inside the cloned repository under the `build/bin` directory.
+Output logs are saved under the clonded repo, in the `build/logs` directory.
 
 ### Azure CLI
 
