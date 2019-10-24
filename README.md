@@ -27,7 +27,7 @@ $ make build
 ```
 
 The binary is built inside the cloned repository under the `build/bin` directory.
-Output logs are saved under the clonded repo, in the `build/logs` directory.
+Output logs are saved under the `build/logs` directory.
 
 ### Azure CLI
 
