@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"encoding/base64"
 	"fmt"
 	"os"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/trawler/cna-installer/pkg/terraform"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 // createCmd represents the create command
@@ -36,9 +39,6 @@ func initClusterWorkspace() error {
 		return fmt.Errorf("%v", err)
 	}
 
-	// debugging:
-	fmt.Printf("DEBUG:\n cluster: %+v\n\n", cluster)
-
 	logDir, err = getLogDir()
 	stateFileName, _ = getStateFilePath("backend")
 
@@ -47,12 +47,30 @@ func initClusterWorkspace() error {
 		return fmt.Errorf("%v", err)
 	}
 
-	// debugging:
-	fmt.Printf("DEBUG::\n state: %v", state)
+	accessKey, err := getRemoteBackendAccessKey(state)
+	if err != nil {
+		return fmt.Errorf("cannot fetch remote access key: %v", err)
+	}
+	aKeyEncrypted, _ := base64.URLEncoding.DecodeString(accessKey)
+	fmt.Printf("Found access key in state file: %v\n", string(aKeyEncrypted))
 
 	return nil
 }
 
+func getRemoteBackendAccessKey(tfstate *terraform.State) (string, error) {
+	tfBackend, err := terraform.LookupResource(tfstate, "", "azurerm_storage_account", "tf-backend")
+	if err != nil {
+		return "", errors.Wrap(err, "failed to lookup remote backend")
+	}
+	if len(tfBackend.Instances) == 0 {
+		return "", errors.New("no remote backend instance found")
+	}
+	accessKey, _, err := unstructured.NestedString(tfBackend.Instances[0].Attributes, "primary_access_key")
+	if err != nil {
+		return "", errors.New("no primary access key found for remote backend")
+	}
+	return accessKey, nil
+}
 func init() {
 	rootCmd.AddCommand(clusterCmd)
 	clusterCmd.AddCommand(clusterCreateCmd)
