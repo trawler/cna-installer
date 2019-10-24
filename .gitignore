@@ -1,3 +1,5 @@
 .terraform
 terraform.tfstate*
 build
+vendor/pkg
+vendor/src

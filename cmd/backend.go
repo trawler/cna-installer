@@ -8,9 +8,6 @@ import (
 	"github.com/trawler/cna-installer/pkg/terraform"
 )
 
-var stateFileName string
-var tf *terraform.Executor
-
 var initParams = terraform.NewTerraformInitParams()
 var planParams = terraform.NewTerraformPlanParams()
 
@@ -66,7 +63,7 @@ to quickly create a Cobra application.`,
 func initWorkspace() error {
 	// Get the logDir path and direct tf output to state file
 	logDir, err = getLogDir()
-	stateFileName, _ = getStateFile("backend")
+	stateFileName, _ = getStateFilePath("backend")
 
 	// Populate TF_VAR Environment variables
 	if err = terraform.GetEnvVars(cluster); err != nil {
@@ -74,7 +71,7 @@ func initWorkspace() error {
 	}
 
 	// Set the executionPath for the terraform backend config
-	executionPath := "../data/terraform/tf-backend"
+	executionPath := "../../data/terraform/tf-backend"
 	tf, err = terraform.NewTerraformClient(executionPath, logDir)
 	if err != nil {
 		return fmt.Errorf("%v", err)
