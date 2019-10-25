@@ -60,15 +60,17 @@ func initConfig() {
 
 func getStateFilePath(tfName string) (string, error) {
 	dir, err := getLogDir()
-
+	if err != nil {
+		return "", fmt.Errorf("%v", err)
+	}
 	statefileName := filepath.Join(dir, fmt.Sprintf("%s_terraform.tfstate", tfName))
-	return statefileName, err
+	return statefileName, nil
 }
 
 func getLogDir() (string, error) {
 	logDir, err := filepath.Abs("../logs")
 	if err != nil {
-		return "", fmt.Errorf("cannot get running dir: %v", err)
+		return "", fmt.Errorf("%v", err)
 	}
 	return logDir, nil
 }

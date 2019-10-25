@@ -24,23 +24,31 @@ type TfAzureVars struct {
 	ClientSecret     string `json:",inline" yaml:"clientSecret,omitempty"`
 	OSDisksize       string `json:",inline" yaml:"agentOSDiskSizeGB,omitempty"`
 	OSType           string `json:",inline" yaml:"agentOSType,omitempty"`
+	PublicKeyFile    string `json:",inline" yaml:"publicKey,omitempty"`
 	ResourceGroup    string
 	VMSize           string `json:",inline" yaml:"agentVMSize,omitempty"`
 }
 
 // AzureAuth holds the required fields for Azure authentication
 type AzureAuth struct {
-	SubsctiptionID   string
-	ClientID         string
-	ClientSecret     string
-	TenantID         string
-	BackendAccessKey string
+	ClientID       string
+	ClientSecret   string
+	SubsctiptionID string
+	TenantID       string
+}
+
+// AzureBackend holds the required fields for using a storage account as remote backend
+type AzureBackend struct {
+	AccessKey          string
+	ContainerName      string
+	Key                string
+	StorageAccountName string
 }
 
 // TfInitParams is a struct that holds terraform init parameters
 type TfInitParams struct {
 	Backend       *bool
-	BackendConfig string
+	BackendConfig []string
 	ForceCopy     bool
 	FromModule    string
 	Get           *bool

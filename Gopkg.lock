@@ -178,8 +178,7 @@
   version = "v1.1.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:69ee2954e0006a4b8907ce5130a2df12195f443a7c570aa3afb98f8aae65ae7a"
+  digest = "1:9cf41b8ef690e15c18f75f6cc15809badbbbb75a7ff8e0f533d04f8fa688025a"
   name = "golang.org/x/net"
   packages = [
     "http/httpguts",
@@ -188,7 +187,7 @@
     "idna",
   ]
   pruneopts = "UT"
-  revision = "ec77196f6094c3492a8b61f2c11cf937f78992ae"
+  revision = "cdfb69ac37fc"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -216,12 +215,12 @@
   version = "v0.3.2"
 
 [[projects]]
-  digest = "1:2d1fbdc6777e5408cabeb02bf336305e724b925ff4546ded0fa8715a7267922a"
+  digest = "1:ef72505cf098abdd34efeea032103377bec06abb61d8a06f002d5d296a4b1185"
   name = "gopkg.in/inf.v0"
   packages = ["."]
   pruneopts = "UT"
-  revision = "d2d2541c53f18d2a059457998ce2876cc8e67cbf"
-  version = "v0.9.1"
+  revision = "3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4"
+  version = "v0.9.0"
 
 [[projects]]
   digest = "1:59f10c1537d2199d9115d946927fe31165959a95190849c82ff11e05803528b0"
@@ -233,7 +232,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:be05a30fd9750b3c61898fd300265ce36402e4b53d66fe8514b579e4cae1665f"
+  digest = "1:0665856fee2c68e7a1aa1f9ea95f582b06da12be22d69b428965637d35d77413"
   name = "k8s.io/apimachinery"
   packages = [
     "pkg/api/resource",
@@ -260,7 +259,7 @@
     "third_party/forked/golang/reflect",
   ]
   pruneopts = "UT"
-  revision = "62ce3d1e6a82ef595e5c3fd80a6cf8a8f53566b4"
+  revision = "ced427e1ea5fdd2d307fa083f960961ceff71b65"
 
 [[projects]]
   digest = "1:93e82f25d75aba18436ad1ac042cb49493f096011f2541075721ed6f9e05c044"

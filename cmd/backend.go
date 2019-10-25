@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"os"
+	"log"
 
 	"github.com/spf13/cobra"
 	"github.com/trawler/cna-installer/pkg/terraform"
@@ -28,14 +28,7 @@ var backendInitCmd = &cobra.Command{
 Create and generate the remote backend required for installation.
 If you already have a remote backend, this step can be skipped.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := initWorkspace(); err != nil {
-			fmt.Printf("failed to initialize environment: %v\n", err)
-			os.Exit(1)
-		}
-		if err := initBackend(); err != nil {
-			fmt.Printf("Error initializing backend:\n%v\n", err)
-			os.Exit(1)
-		}
+		backendInit()
 	},
 }
 
@@ -49,26 +42,36 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := initWorkspace(); err != nil {
-			fmt.Printf("failed to initialize environment: %v\n", err)
-			os.Exit(1)
-		}
-		if err := destroyBackend(); err != nil {
-			fmt.Printf("Error destroying backend:\n%v\n", err)
-			os.Exit(1)
-		}
+		backendDestroy()
 	},
+}
+
+func backendInit() {
+	if err := initWorkspace(); err != nil {
+		fmt.Printf("failed to initialize environment: %v\n", err)
+		log.Fatal(err)
+	}
+	if err := tfRun(); err != nil {
+		fmt.Printf("Error initializing backend:\n%v\n", err)
+		log.Fatal(err)
+	}
+}
+
+func backendDestroy() {
+	if err := initWorkspace(); err != nil {
+		fmt.Printf("failed to initialize environment: %v\n", err)
+		log.Fatal(err)
+	}
+	if err := tfDestroy(); err != nil {
+		fmt.Printf("Failed to clean up cluster backend:\n%v\n", err)
+		log.Fatal(err)
+	}
 }
 
 func initWorkspace() error {
 	// Get the logDir path and direct tf output to state file
 	logDir, err = getLogDir()
 	stateFileName, _ = getStateFilePath("backend")
-
-	// Populate TF_VAR Environment variables
-	if err = terraform.GetEnvVars(cluster); err != nil {
-		return fmt.Errorf("%v", err)
-	}
 
 	// Set the executionPath for the terraform backend config
 	executionPath := "../../data/terraform/tf-backend"
@@ -78,47 +81,6 @@ func initWorkspace() error {
 	}
 	// set the location of the state File
 	planParams.State = &stateFileName
-
-	return nil
-}
-
-func initBackend() error {
-	// Get Init opts
-	initParams.Opts()
-
-	// Run terraform init
-	init := tf.Init(initParams)
-
-	init.Initialise()
-	init.Run()
-
-	// Run terraform plan
-	planParams.Opts()
-	plan := tf.Plan(planParams)
-	plan.Initialise()
-
-	if err = plan.Run(); err != nil {
-		return fmt.Errorf("%v", err)
-	}
-
-	// Run terraform apply
-	apply := tf.Apply(planParams)
-	apply.Initialise()
-
-	if err = apply.Run(); err != nil {
-		return fmt.Errorf("%v", err)
-	}
-
-	return nil
-}
-
-func destroyBackend() error {
-	destroy := tf.Destroy(planParams)
-	destroy.Initialise()
-
-	if err = destroy.Run(); err != nil {
-		return fmt.Errorf("%v", err)
-	}
 
 	return nil
 }
