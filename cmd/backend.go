@@ -48,11 +48,11 @@ to quickly create a Cobra application.`,
 
 func backendInit() {
 	if err := initWorkspace(); err != nil {
-		fmt.Printf("failed to initialize environment: %v\n", err)
+		fmt.Printf("\nERROR:\nfailed to initialize environment:\n\n ")
 		log.Fatal(err)
 	}
 	if err := tfRun(); err != nil {
-		fmt.Printf("Error initializing backend:\n%v\n", err)
+		fmt.Printf("\nERROR:\nfailed to run terraform:\n\n ")
 		log.Fatal(err)
 	}
 }

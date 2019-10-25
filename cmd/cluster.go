@@ -40,18 +40,18 @@ var clusterDestroyCmd = &cobra.Command{
 
 func clusterCreate() {
 	if err := initClusterWorkspace(); err != nil {
-		fmt.Printf("failed to initialize environment: %v\n", err)
+		fmt.Printf("\nERROR:\nfailed to initialize environment:\n\n ")
 		log.Fatal(err)
 	}
 	if err := tfRun(); err != nil {
-		fmt.Printf("Error creating cluster:\n%v\n", err)
+		fmt.Printf("\nERROR:\nfailed to run terraform:\n\n ")
 		log.Fatal(err)
 	}
 }
 
 func clusterDestroy() {
 	if err := initClusterWorkspace(); err != nil {
-		fmt.Printf("failed to initialize environment: %v\n", err)
+		//fmt.Printf("failed to initialize environment: %v\n", err)
 		log.Fatal(err)
 	}
 	if err := tfDestroy(); err != nil {
