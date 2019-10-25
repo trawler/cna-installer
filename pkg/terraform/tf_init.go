@@ -1,6 +1,8 @@
 package terraform
 
-import "strconv"
+import (
+	"strconv"
+)
 
 // NewTerraformInitParams function accepts a pointer to a TfInitParams
 // structure and returns its address
@@ -15,10 +17,12 @@ func (p *TfInitParams) Opts() map[string][]string {
 
 	if p.Backend != nil && *p.Backend == false {
 		opts["backend"] = []string{"false"}
+	} else {
+		opts["backend"] = []string{"true"}
 	}
 
-	if p.BackendConfig != "" {
-		opts["backend-config"] = []string{p.BackendConfig}
+	if len(p.BackendConfig) > 0 {
+		opts["backend-config"] = p.BackendConfig
 	}
 
 	if p.ForceCopy {
@@ -79,6 +83,7 @@ func (p *TfInitParams) Opts() map[string][]string {
 // OptsString comment
 func (p *TfInitParams) OptsString() string {
 	return extractOptsString(p)
+
 }
 
 // OptsStringSlice comment

@@ -57,6 +57,10 @@ func ReadStateFile(file string) (*State, error) {
 	if err := json.Unmarshal(sfRaw, &tfstate); err != nil {
 		return nil, errors.Wrapf(err, "failed to unmarshal %q", file)
 	}
+	if len(tfstate.Resources) == 0 {
+		return nil, fmt.Errorf("found empty state file: %v", file)
+	}
+
 	return &tfstate, nil
 }
 

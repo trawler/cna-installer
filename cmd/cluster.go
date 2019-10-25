@@ -1,15 +1,15 @@
 package cmd
 
 import (
-	"encoding/base64"
 	"fmt"
-	"os"
+	"log"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/trawler/cna-installer/pkg/terraform"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
+
+var remoteBackend *terraform.AzureBackend
 
 // createCmd represents the create command
 var clusterCmd = &cobra.Command{
@@ -26,21 +26,84 @@ Creats a Kubernetes cluster. In the case of Azure, AKS will be used.
 If you already have a remote backend, make sure the access details are stated in cna-installer.yaml.
 Otherwise, a new remote backend will be created and used.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := initClusterWorkspace(); err != nil {
-			fmt.Printf("failed to initialize environment: %v\n", err)
-			os.Exit(1)
-		}
+		clusterCreate()
 	},
 }
 
+var clusterDestroyCmd = &cobra.Command{
+	Use:   "destroy",
+	Short: "Destroy a Kubernetes cluster.",
+	Run: func(cmd *cobra.Command, args []string) {
+		clusterDestroy()
+	},
+}
+
+func clusterCreate() {
+	if err := initClusterWorkspace(); err != nil {
+		fmt.Printf("failed to initialize environment: %v\n", err)
+		log.Fatal(err)
+	}
+	if err := tfRun(); err != nil {
+		fmt.Printf("Error creating cluster:\n%v\n", err)
+		log.Fatal(err)
+	}
+}
+
+func clusterDestroy() {
+	if err := initClusterWorkspace(); err != nil {
+		fmt.Printf("failed to initialize environment: %v\n", err)
+		log.Fatal(err)
+	}
+	if err := tfDestroy(); err != nil {
+		fmt.Printf("Failed to clean up cluster:\n%v\n", err)
+		log.Fatal(err)
+	}
+}
+
 func initClusterWorkspace() error {
-	// Populate TF_VAR Environment variables
-	if err = terraform.GetEnvVars(cluster); err != nil {
+	logDir, err = getLogDir()
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+	if err := getRemoteBackend(); err != nil {
+		return fmt.Errorf("failed to configure remote backend: %v", err)
+	}
+	if err := prepareTFRun(); err != nil {
+		return fmt.Errorf("failed to set terraform run environment: %v", err)
+	}
+	return nil
+}
+
+func prepareTFRun() error {
+	stateFileName, err = getStateFilePath("aks")
+	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
 
-	logDir, err = getLogDir()
+	// Set the executionPath for the terraform backend config
+	executionPath := "../../data/terraform/aks"
+	tf, err = terraform.NewTerraformClient(executionPath, logDir)
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
+	initParams.Backend = terraform.TruePtr()
+	initParams.BackendConfig = append([]string{
+		fmt.Sprintf("storage_account_name=%s", remoteBackend.StorageAccountName),
+		fmt.Sprintf("container_name=%s", remoteBackend.ContainerName),
+		fmt.Sprintf("key=%s", remoteBackend.Key),
+		fmt.Sprintf("access_key=%s", remoteBackend.AccessKey),
+	})
+	// set the location of the state File
+	planParams.State = &stateFileName
+	return nil
+}
+
+func getRemoteBackend() error {
 	stateFileName, _ = getStateFilePath("backend")
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
 
 	state, err := terraform.ReadStateFile(stateFileName)
 	if err != nil {
@@ -51,27 +114,53 @@ func initClusterWorkspace() error {
 	if err != nil {
 		return fmt.Errorf("cannot fetch remote access key: %v", err)
 	}
-	aKeyEncrypted, _ := base64.URLEncoding.DecodeString(accessKey)
-	fmt.Printf("Found access key in state file: %v\n", string(aKeyEncrypted))
+	containerName, err := getStorageContainerName(state)
+	if err != nil {
+		return fmt.Errorf("cannot fetch storage container name: %v", err)
+	}
 
+	// build remote backend auth struct
+	remoteBackend = &terraform.AzureBackend{
+		AccessKey:          accessKey,
+		ContainerName:      "terraform-tfstate",
+		Key:                "terraform.k8srnd.tfstate",
+		StorageAccountName: containerName,
+	}
 	return nil
 }
 
 func getRemoteBackendAccessKey(tfstate *terraform.State) (string, error) {
-	tfBackend, err := terraform.LookupResource(tfstate, "", "azurerm_storage_account", "tf-backend")
+	backend, err := terraform.LookupResource(tfstate, "", "azurerm_storage_account", "tf-backend")
 	if err != nil {
-		return "", errors.Wrap(err, "failed to lookup remote backend")
+		return "", fmt.Errorf("failed to lookup remote backend: %v", err)
 	}
-	if len(tfBackend.Instances) == 0 {
-		return "", errors.New("no remote backend instance found")
+	if len(backend.Instances) == 0 {
+		return "", fmt.Errorf("no remote backend instance found")
 	}
-	accessKey, _, err := unstructured.NestedString(tfBackend.Instances[0].Attributes, "primary_access_key")
+	accessKey, _, err := unstructured.NestedString(backend.Instances[0].Attributes, "primary_access_key")
 	if err != nil {
-		return "", errors.New("no primary access key found for remote backend")
+		return "", fmt.Errorf("no primary access key found for remote backend")
 	}
 	return accessKey, nil
 }
+
+func getStorageContainerName(tfstate *terraform.State) (string, error) {
+	storageContainer, err := terraform.LookupResource(tfstate, "", "azurerm_storage_container", "tf-storage-container")
+	if err != nil {
+		return "", fmt.Errorf("failed to lookup storage container: %v", err)
+	}
+	if len(storageContainer.Instances) == 0 {
+		return "", fmt.Errorf("no storage container instance found")
+	}
+	containerName, _, err := unstructured.NestedString(storageContainer.Instances[0].Attributes, "storage_account_name")
+	if err != nil {
+		return "", fmt.Errorf("no container name found for storage container")
+	}
+	return containerName, nil
+}
+
 func init() {
 	rootCmd.AddCommand(clusterCmd)
 	clusterCmd.AddCommand(clusterCreateCmd)
+	clusterCmd.AddCommand(clusterDestroyCmd)
 }

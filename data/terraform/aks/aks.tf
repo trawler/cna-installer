@@ -5,7 +5,7 @@ terraform {
 }
 
 provider "azurerm" {
-  version = "1.31.0"
+  version = "1.35.0"
 }
 
 provider "local" {
@@ -56,10 +56,10 @@ resource "azurerm_kubernetes_cluster" "k8s" {
 
 resource "local_file" "kubectl" {
   content  = azurerm_kubernetes_cluster.k8s.kube_config_raw
-  filename = "${path.module}/generated/auth/kubeconfig"
+  filename = "${path.cwd}/../logs/generated/auth/kubeconfig"
 }
 
 resource "local_file" "client_certificate" {
   content  = azurerm_kubernetes_cluster.k8s.kube_config.0.client_certificate
-  filename = "${path.module}/generated/auth/client.pem"
+  filename = "${path.cwd}/../logs/generated/auth/client.pem"
 }
