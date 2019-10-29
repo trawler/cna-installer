@@ -18,11 +18,11 @@ resource "azurerm_resource_group" "k8s" {
 }
 
 resource "azurerm_kubernetes_cluster" "k8s" {
-  name                = var.k8s_cluster_name
+  name                = format("%s-%s", var.cluster_owner, var.k8s_cluster_name)
   location            = azurerm_resource_group.k8s.location
   resource_group_name = azurerm_resource_group.k8s.name
   kubernetes_version  = var.k8s_version
-  dns_prefix          = var.dns_prefix
+  dns_prefix          = var.cluster_owner
 
   linux_profile {
     admin_username = "ubuntu"
@@ -33,7 +33,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
 
   agent_pool_profile {
     count           = var.agent_count
-    name            = var.k8s_cluster_name
+    name            = var.agent_pool_name
     vm_size         = var.agent_vm_size
     os_type         = var.agent_os_type
     os_disk_size_gb = var.agent_os_disk_size_gb

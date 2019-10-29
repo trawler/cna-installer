@@ -80,6 +80,27 @@ func prepareTFRun() error {
 		return fmt.Errorf("%v", err)
 	}
 
+	// Set the resource group name to `cluster name`-`cluster owner`-aks
+	cluster.TfAzureVars.ResourceGroup = fmt.Sprintf(
+		"%s-%s-aks",
+		cluster.TfConfigVars.ClusterName,
+		cluster.TfConfigVars.ClusterOwner,
+	)
+
+	// set cluster domain to `cluster name`.`cluster owner`.`base domain`
+	cluster.TfConfigVars.BaseDomain = fmt.Sprintf("%s.%s.%s",
+		cluster.TfConfigVars.ClusterName,
+		cluster.TfConfigVars.ClusterOwner,
+		cluster.TfConfigVars.BaseDomain,
+	)
+
+	// set the azure agent's pool name
+	agentPoolName, err := sanitizeAgentPoolName(cluster.TfConfigVars.ClusterName, cluster.TfConfigVars.ClusterOwner)
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+	cluster.TfAzureVars.AgentPoolName = agentPoolName
+
 	// Set the executionPath for the terraform backend config
 	executionPath := "../../data/terraform/aks"
 	tf, err = terraform.NewTerraformClient(executionPath, logDir)
@@ -122,15 +143,15 @@ func getRemoteBackend() error {
 	// build remote backend auth struct
 	remoteBackend = &terraform.AzureBackend{
 		AccessKey:          accessKey,
-		ContainerName:      "terraform-tfstate",
-		Key:                "terraform.k8srnd.tfstate",
+		ContainerName:      "cna-tfstate",
+		Key:                fmt.Sprintf("terraform.%s.tfstate", cluster.TfConfigVars.ClusterOwner),
 		StorageAccountName: containerName,
 	}
 	return nil
 }
 
 func getRemoteBackendAccessKey(tfstate *terraform.State) (string, error) {
-	backend, err := terraform.LookupResource(tfstate, "", "azurerm_storage_account", "tf-backend")
+	backend, err := terraform.LookupResource(tfstate, "", "azurerm_storage_account", "tf-cna-backend")
 	if err != nil {
 		return "", fmt.Errorf("failed to lookup remote backend: %v", err)
 	}

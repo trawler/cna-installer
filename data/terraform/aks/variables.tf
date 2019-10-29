@@ -11,7 +11,6 @@ variable "k8s_resource_group_name" {
 variable "az_location" {
   description = "(Required) The location where the Managed Kubernetes Cluster should be created. Changing this forces a new resource to be created."
   type        = "string"
-  default     = "francecentral"
 }
 
 variable "k8s_cluster_name" {
@@ -27,8 +26,8 @@ EOF
   type        = "string"
 }
 
-variable "dns_prefix" {
-  description = "(Required) DNS prefix specified when creating the managed cluster. Changing this forces a new resource to be created."
+variable "cluster_owner" {
+  description = "(Required) the user or group that created the cluster. Changing this forces a new resource to be created."
   type        = "string"
 }
 
@@ -50,8 +49,8 @@ variable "agent_count" {
 (Required) Number of Agents (VMs) in the Pool. Possible values must be in
 the range of 1 to 100 (inclusive). Defaults to 1.
 EOF
-
-  default = 1
+  type        = "string"
+  default     = 1
 }
 
 variable "agent_os_type" {
@@ -65,6 +64,12 @@ EOF
 
 variable "agent_os_disk_size_gb" {
   description = "(Optional) The Agent Operating System disk size in GB. "
+}
+
+variable "agent_pool_name" {
+  description = <<EOF
+ (Required) Unique name of the Agent Pool Profile in the context of the Subscription and Resource Group. Changing this forces a new resource to be created.
+EOF
 }
 
 variable "azure_client_id" {
