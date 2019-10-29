@@ -1,12 +1,13 @@
 config:
-  clusterName: dev
+  clusterName: dev-cluster1
   clusterOwner: myuser
-  clusterVersion: 1.14.3
-  baseDomain: dev.myuser.example.com
+  clusterVersion: 1.15.4
+  baseDomain: example.com
 
 azure:
   agentCount: 3
   agentOSDiskSizeGB: 30
   agentOSType: Linux
   agentVMSize: Standard_DS2_v2
+  availabilityZone: francecentral
   publicKey: ~/.ssh/id_rsa.pub

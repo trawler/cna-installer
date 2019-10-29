@@ -18,7 +18,8 @@ type TfConfigVars struct {
 
 // TfAzureVars comment
 type TfAzureVars struct {
-	AgentCount       int    `json:",inline" yaml:"agentCount,omitempty"`
+	AgentCount       int `json:",inline" yaml:"agentCount,omitempty"`
+	AgentPoolName    string
 	AvailabilityZone string `json:",inline" yaml:"availabilityZone,omitempty"`
 	ClientID         string `json:",inline" yaml:"clientID,omitempty"`
 	ClientSecret     string `json:",inline" yaml:"clientSecret,omitempty"`

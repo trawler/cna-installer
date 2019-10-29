@@ -6,7 +6,6 @@ variable "k8s_resource_group_name" {
 variable "az_location" {
   description = "(Required) The location where the Managed Kubernetes Cluster should be created. Changing this forces a new resource to be created."
   type        = "string"
-  default     = "francecentral"
 }
 
 variable "k8s_cluster_name" {
@@ -14,7 +13,7 @@ variable "k8s_cluster_name" {
   type        = "string"
 }
 
-variable "dns_prefix" {
+variable "cluster_owner" {
   description = "(Required) DNS prefix specified when creating the managed cluster. Changing this forces a new resource to be created."
   type        = "string"
 }

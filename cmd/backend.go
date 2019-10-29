@@ -82,6 +82,13 @@ func initWorkspace() error {
 	// set the location of the state File
 	planParams.State = &stateFileName
 
+	// Set the resource group name to `cluster name`-`cluster owner`-rb
+	cluster.TfAzureVars.ResourceGroup = fmt.Sprintf(
+		"%s-%s-rb",
+		cluster.TfConfigVars.ClusterName,
+		cluster.TfConfigVars.ClusterOwner,
+	)
+
 	return nil
 }
 

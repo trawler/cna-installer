@@ -6,6 +6,8 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/trawler/cna-installer/pkg/terraform"
@@ -81,4 +83,33 @@ func getHomeDir() (string, error) {
 		return "", fmt.Errorf("cannot get home dir. is $HOME set in your environment? \n%v", err)
 	}
 	return home, nil
+}
+
+// Agent Pool Name must start with a lowercase letter, have max length of 12, and only have characters a-z0-9.
+// This function takes the cluster's name and formats a valid agent pool name.
+func sanitizeAgentPoolName(cName string, cOwner string) (string, error) {
+	rawName := fmt.Sprintf("%s-%s", cOwner, cName)
+	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
+	if err != nil {
+		return "", fmt.Errorf("%v", err)
+	}
+
+	splitArray := reg.Split(rawName, -1)
+	maxLength := 12
+	tmpName := ""
+	addon := ""
+
+	for _, element := range splitArray {
+		// don't capitalize first letter
+		addon = strings.ToLower(element)
+
+		// limit output to maxLength
+		if len(tmpName+string(element)) <= maxLength {
+			tmpName = tmpName + addon
+		} else {
+			break
+		}
+
+	}
+	return tmpName, nil
 }

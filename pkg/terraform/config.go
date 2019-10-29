@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 
 	"gopkg.in/yaml.v2"
 )
@@ -48,20 +49,21 @@ func GetEnvVars(c *Cluster) error {
 		return fmt.Errorf("clusterOwner is not set")
 	}
 
-	c.TfAzureVars.ResourceGroup = fmt.Sprintf("%s_%s", c.TfConfigVars.ClusterName, c.TfConfigVars.ClusterOwner)
-
 	prefix := "TF_VAR"
 	os.Setenv(fmt.Sprintf("%s_base_domain", prefix), c.TfConfigVars.BaseDomain)
-	os.Setenv(fmt.Sprintf("%s_dns_prefix", prefix), c.TfConfigVars.ClusterOwner)
+	os.Setenv(fmt.Sprintf("%s_cluster_owner", prefix), c.TfConfigVars.ClusterOwner)
 	os.Setenv(fmt.Sprintf("%s_k8s_cluster_name", prefix), c.TfConfigVars.ClusterName)
 	os.Setenv(fmt.Sprintf("%s_k8s_version", prefix), c.TfConfigVars.ClusterVersion)
 
-	os.Setenv(fmt.Sprintf("%s_k8s_resource_group_name", prefix), c.TfAzureVars.ResourceGroup)
+	os.Setenv(fmt.Sprintf("%s_agent_count", prefix), strconv.Itoa(c.TfAzureVars.AgentCount))
 	os.Setenv(fmt.Sprintf("%s_agent_os_disk_size_gb", prefix), c.TfAzureVars.OSDisksize)
+	os.Setenv(fmt.Sprintf("%s_agent_pool_name", prefix), c.TfAzureVars.AgentPoolName)
 	os.Setenv(fmt.Sprintf("%s_agent_vm_size", prefix), c.TfAzureVars.VMSize)
-	os.Setenv(fmt.Sprintf("%s_public_key_file", prefix), c.TfAzureVars.PublicKeyFile)
+	os.Setenv(fmt.Sprintf("%s_az_location", prefix), c.TfAzureVars.AvailabilityZone)
 	os.Setenv(fmt.Sprintf("%s_azure_client_id", prefix), auth.ClientID)
 	os.Setenv(fmt.Sprintf("%s_azure_client_secret", prefix), auth.ClientSecret)
+	os.Setenv(fmt.Sprintf("%s_k8s_resource_group_name", prefix), c.TfAzureVars.ResourceGroup)
+	os.Setenv(fmt.Sprintf("%s_public_key_file", prefix), c.TfAzureVars.PublicKeyFile)
 
 	return nil
 }
