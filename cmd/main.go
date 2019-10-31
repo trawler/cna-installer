@@ -26,7 +26,7 @@ var rootCmd = &cobra.Command{
 	Use:   "cna-installer",
 	Short: "Creates a CNA cluster",
 	Long: `cna-installer is a binary that installs, sets-up and configures a
-kubernetes cluster with the CNA stack applications.`,
+Kubernetes cluster with the CNA stack applications.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
