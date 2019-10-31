@@ -1,0 +1,30 @@
+name: "build"
+
+on:
+  push:
+    branches: [master]
+    paths:
+    - README.md
+
+jobs:
+  markdown-lint-check:
+    name: "Markdown lint check"
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: "Install Node.js 12"
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: "Install markdownlint-cli"
+      run: npm install -g markdownlint-cli
+
+    - name: "Create markdownlint configuration file"
+      run: |
+        echo "{ MD013: { code_blocks: false } }" > /tmp/markdownlint_config.json
+
+    - name: "Run markdownlint"
+      run: markdownlint -c /tmp/markdownlint_config.json README.md
