@@ -82,7 +82,10 @@ variable "azure_client_secret" {
   description = "(Required) The Client Secret for the Service Principal."
 }
 
-variable "argocd_dex_liveness_readyness_path" {
-  type    = "string"
-  default = "/api/dex/.well-known/openid-configuration"
+variable "cluster_autoscaling" {
+  description = <<EOF
+(Optional) Whether to enable auto-scaler. Note that auto scaling feature requires the that the type is set to VirtualMachineScaleSets.
+EOF
+  type        = bool
+  default     = false
 }

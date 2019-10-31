@@ -61,6 +61,8 @@ func GetEnvVars(c *Cluster) error {
 	os.Setenv(fmt.Sprintf("%s_agent_vm_size", prefix), c.TfAzureVars.VMSize)
 	os.Setenv(fmt.Sprintf("%s_az_location", prefix), c.TfAzureVars.AvailabilityZone)
 	os.Setenv(fmt.Sprintf("%s_azure_client_id", prefix), auth.ClientID)
+	os.Setenv(fmt.Sprintf("%s_cluster_autoscaling", prefix),
+		fmt.Sprintf("%t", c.TfAzureVars.AutoScaler))
 	os.Setenv(fmt.Sprintf("%s_azure_client_secret", prefix), auth.ClientSecret)
 	os.Setenv(fmt.Sprintf("%s_k8s_resource_group_name", prefix), c.TfAzureVars.ResourceGroup)
 	os.Setenv(fmt.Sprintf("%s_public_key_file", prefix), c.TfAzureVars.PublicKeyFile)
