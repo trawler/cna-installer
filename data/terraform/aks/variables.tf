@@ -63,7 +63,7 @@ EOF
 }
 
 variable "agent_os_disk_size_gb" {
-  description = "(Optional) The Agent Operating System disk size in GB. "
+  description = "(Optional) The Agent Operating System disk size in GB."
 }
 
 variable "agent_pool_name" {
@@ -88,4 +88,9 @@ variable "cluster_autoscaling" {
 EOF
   type        = bool
   default     = false
+}
+
+variable "linux_admin_username" {
+  description = "Default login name to Kubernetes worker nodes."
+  default     = "ubuntu"
 }

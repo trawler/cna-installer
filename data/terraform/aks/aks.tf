@@ -25,7 +25,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   dns_prefix          = var.cluster_owner
 
   linux_profile {
-    admin_username = "ubuntu"
+    admin_username = var.linux_admin_username
     ssh_key {
       key_data = file(var.public_key_file)
     }
