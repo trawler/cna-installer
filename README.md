@@ -73,7 +73,7 @@ Next, add a new role assignment for the Installer to use:
 }
 ```
 
-#### Set-Up the Environment Variables
+#### Set-Up Your Environment Variables
 Set the following environment variables, per the mapping below:
 ```bash
 # id field in az login output
@@ -87,4 +87,19 @@ export ARM_CLIENT_SECRET=SOME_PASSWORD
 
 # tenant field in az ad output
 export ARM_TENANT_ID=MY_TENANT_ID
+```
+## Creating A Cluster
+### Config File
+```
+> cp cna-installer.example.yaml $HOME/.cna-installer.yaml
+```
+Edit the file to set-up your cluster settings.
+### Create a Remote Backend
+To do that, simply run:
+```
+> ./cna-installer backend init
+```
+### Create Your Cluster
+```
+> ./cna-installer cluster create
 ```

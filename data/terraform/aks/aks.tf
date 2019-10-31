@@ -32,11 +32,17 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   }
 
   agent_pool_profile {
-    count           = var.agent_count
+    count = local.agent_count
+
+    enable_auto_scaling = var.cluster_autoscaling
+    max_count           = local.autoscaling_max_count
+    min_count           = local.autoscaling_min_count
+
     name            = var.agent_pool_name
-    vm_size         = var.agent_vm_size
-    os_type         = var.agent_os_type
     os_disk_size_gb = var.agent_os_disk_size_gb
+    os_type         = var.agent_os_type
+    type            = local.agent_pool_type
+    vm_size         = var.agent_vm_size
   }
 
   service_principal {
