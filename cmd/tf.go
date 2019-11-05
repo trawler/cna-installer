@@ -30,14 +30,14 @@ func tfRun() error {
 		return fmt.Errorf("%v", err)
 	}
 
-	// Run terraform apply
-	apply := tf.Apply(planParams)
-	apply.Initialise()
-
-	if err = apply.Run(); err != nil {
-		return fmt.Errorf("%v", err)
-	}
-
+	// // Run terraform apply
+	// apply := tf.Apply(planParams)
+	// apply.Initialise()
+	//
+	// if err = apply.Run(); err != nil {
+	// 	return fmt.Errorf("%v", err)
+	// }
+	//
 	return nil
 }
 

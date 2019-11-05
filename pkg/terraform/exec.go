@@ -2,6 +2,8 @@ package terraform
 
 import (
 	"errors"
+	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -9,9 +11,11 @@ import (
 	"github.com/kardianos/osext"
 )
 
-// ErrBinaryNotFound is triggered if the TerraForm binary could not be found on disk
-var ErrBinaryNotFound = errors.New(
-	"TerraForm not in executable's folder, cwd nor PATH",
+var (
+	configFileName = ".terraformrc"
+
+	// ErrBinaryNotFound is triggered if the TerraForm binary could not be found on disk
+	ErrBinaryNotFound = errors.New("TerraForm not in executable's folder, cwd nor PATH")
 )
 
 // Executor enables calling TerraForm from Go, across platforms, with any
@@ -29,10 +33,11 @@ var ErrBinaryNotFound = errors.New(
 // directly. See https://github.com/hashicorp/terraform/issues/12582 for more info.
 type Executor struct {
 	binaryPath    string
-	version       string
+	configPath    string
+	envVariables  map[string]string
 	executionPath string
 	logDir        string
-	envVariables  map[string]string
+	version       string
 }
 
 // NewTerraformClient return a struct which behaves like the cli terraform client.
@@ -46,6 +51,18 @@ func NewTerraformClient(executionPath string, logDir string) (*Executor, error) 
 	if err != nil {
 		return nil, err
 	}
+
+	config, err := BuildPluginsConfig()
+	fmt.Printf("config: %+v", config)
+	if err != nil {
+		return nil, err
+	}
+
+	ex.configPath = filepath.Join(ex.executionPath, configFileName)
+	if err := ioutil.WriteFile(ex.configPath, []byte(config), 0660); err != nil {
+		return nil, err
+	}
+
 	ex.binaryPath = out
 	return ex, nil
 }

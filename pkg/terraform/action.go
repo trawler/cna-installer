@@ -4,12 +4,21 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/trawler/cna-installer-bak/data"
 )
 
 // Initialise comment
 func (a *TfAction) Initialise() *TfAction {
+
+	err = unpackAndInit(dir, platform)
+	if err != nil {
+		return "", err
+	}
+
 	args := append([]string{a.action}, a.params.OptsStringSlice()...)
 	args = append(args, a.executionPath)
 
@@ -120,4 +129,20 @@ func mapStringSliceKeys(s map[string][]string) (keys []string) {
 		i++
 	}
 	return
+}
+
+// unpack unpacks the platform-specific Terraform modules into the
+// given directory.
+func unpack(dir string, platform string) (err error) {
+	err = data.Unpack(dir, platform)
+	if err != nil {
+		return err
+	}
+
+	err = data.Unpack(filepath.Join(dir, "config.tf"), "config.tf")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
