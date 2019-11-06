@@ -1,0 +1,77 @@
+name: 'Terraform Pull Request Workflow'
+
+on:
+  pull_request:
+    paths:
+    - 'data/terraform/**'
+
+jobs:
+  terraform-check:
+    name: 'Terraform Actions'
+    runs-on: ubuntu-latest
+    env:
+      TF_ACTIONS_VERSION: 0.12.9
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@master
+
+      - name: 'Terraform Format 1'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_subcommand: 'fmt'
+          tf_actions_working_dir: 'data/terraform/aks'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Terraform Format 2'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_subcommand: 'fmt'
+          tf_actions_working_dir: 'data/terraform/tf-backend'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Terraform Init 1'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: 'data/terraform/aks'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TF_CLI_ARGS_init: '-backend=false'
+
+      - name: 'Terraform Init 2'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: 'data/terraform/tf-backend'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Terraform Validate 1'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_subcommand: 'validate'
+          tf_actions_working_dir: 'data/terraform/aks'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Terraform Validate 2'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_subcommand: 'validate'
+          tf_actions_working_dir: 'data/terraform/tf-backend'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
