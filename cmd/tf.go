@@ -30,14 +30,16 @@ func tfRun() error {
 		return fmt.Errorf("%v", err)
 	}
 
-	// Run terraform apply
-	apply := tf.Apply(planParams)
-	apply.Initialise()
+	// Run terraform apply if noop is false or is not set
+	if noop == false {
+		// Run terraform apply
+		apply := tf.Apply(planParams)
+		apply.Initialise()
 
-	if err = apply.Run(); err != nil {
-		return fmt.Errorf("%v", err)
+		if err = apply.Run(); err != nil {
+			return fmt.Errorf("%v", err)
+		}
 	}
-
 	return nil
 }
 
@@ -47,12 +49,27 @@ func tfDestroy() error {
 		return fmt.Errorf("%v", err)
 	}
 
-	destroy := tf.Destroy(planParams)
-	destroy.Initialise()
+	// Run terraform destroy if noop is false or is not set
+	if noop == true {
+		// run terraform plan -destroy
+		planParams.AutoApprove = false
+		planParams.Destroy = true
 
-	if err = destroy.Run(); err != nil {
-		return fmt.Errorf("%v", err)
+		planParams.Opts()
+		plan := tf.Plan(planParams)
+		plan.Initialise()
+
+		if err = plan.Run(); err != nil {
+			return fmt.Errorf("%v", err)
+		}
+	} else {
+		// run terraform destroy -auto-approve
+		planParams.AutoApprove = true
+		destroy := tf.Destroy(planParams)
+		destroy.Initialise()
+		if err = destroy.Run(); err != nil {
+			return fmt.Errorf("%v", err)
+		}
 	}
-
 	return nil
 }
