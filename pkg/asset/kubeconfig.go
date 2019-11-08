@@ -22,7 +22,6 @@ func Client(dir string) (*kubernetes.Clientset, error) {
 }
 
 func getKubeconfig(logDir string) (*rest.Config, error) {
-	fmt.Printf("full path is: %s/generated/auth/kubeconfig", logDir)
 	kubeConfigPath := stringPtr(fmt.Sprintf("%s/generated/auth/kubeconfig", logDir))
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeConfigPath)
 	if err != nil {
