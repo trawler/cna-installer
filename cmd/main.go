@@ -64,14 +64,16 @@ func initConfig() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Set global log dir location
+	logDir, err = getLogDir()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func getStateFilePath(tfName string) (string, error) {
-	dir, err := getLogDir()
-	if err != nil {
-		return "", fmt.Errorf("%v", err)
-	}
-	statefileName := filepath.Join(dir, fmt.Sprintf("%s_terraform.tfstate", tfName))
+	statefileName := filepath.Join(logDir, fmt.Sprintf("%s_terraform.tfstate", tfName))
 	return statefileName, nil
 }
 

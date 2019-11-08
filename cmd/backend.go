@@ -69,8 +69,6 @@ func backendDestroy() {
 }
 
 func initWorkspace() error {
-	// Get the logDir path and direct tf output to state file
-	logDir, err = getLogDir()
 	stateFileName, _ = getStateFilePath("backend")
 
 	// Set the executionPath for the terraform backend config
