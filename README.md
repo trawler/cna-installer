@@ -15,6 +15,8 @@ Available Commands:
 Flags:
       --config string   config file (default is $HOME/.cna-installer.yaml)
   -h, --help            help for cna-installer
+      --noop            dry-run (do not perform changes)
+  -v, --verbose         verbose output
 
 Use "cna-installer [command] --help" for more information about a command.
 ```

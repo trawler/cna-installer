@@ -88,11 +88,6 @@ func (cli *Executor) Apply(params *TfPlanParams) *TfAction {
 
 // Destroy Action
 func (cli *Executor) Destroy(params *TfPlanParams) *TfAction {
-	// because we are using the same param structure for both plan & apply,
-	// we need set auto-approve to true for apply actions
-	if params.AutoApprove == false {
-		params.AutoApprove = true
-	}
 	return &TfAction{
 		action:        "destroy",
 		bin:           cli,

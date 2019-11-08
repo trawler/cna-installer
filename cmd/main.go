@@ -13,13 +13,17 @@ import (
 	"github.com/trawler/cna-installer/pkg/terraform"
 )
 
+// command flags
 var cfgFile string
-var cluster *terraform.Cluster
-var err error
-var logDir string
+var noop bool
+var verbose bool
 
+var cluster *terraform.Cluster
+var logDir string
 var stateFileName string
 var tf *terraform.Executor
+
+var err error
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -39,6 +43,9 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+
+	rootCmd.PersistentFlags().BoolVarP(&noop, "noop", "", false, "dry-run (do not perform changes)")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cna-installer.yaml)")
 }
 
@@ -52,7 +59,6 @@ func initConfig() {
 		}
 		cfgFile = path.Join(home, ".cna-installer.yaml")
 	}
-
 	// Parse the config file into a Cluster struct
 	cluster, err = terraform.ParseConfigFile(cfgFile)
 	if err != nil {
