@@ -10,6 +10,7 @@ jobs:
     name: 'Terraform Actions'
     runs-on: ubuntu-latest
     env:
+      TF_VAR_agent_count: 1
       TF_VAR_agent_pool_name: none
       TF_VAR_agent_vm_size: 1
       TF_VAR_az_location: francecentral

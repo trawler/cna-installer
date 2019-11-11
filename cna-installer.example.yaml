@@ -1,21 +1,35 @@
 config:
+  # (Required) The name of the Managed Kubernetes Cluster to create. Changing this
+  # forces a new resource to be created
   clusterName: dev-cluster1
+  # (Required) the user or group that created the cluster. Changing this forces a new
+  # resource to be created
   clusterOwner: myuser
+  # (Optional) Version of Kubernetes specified when creating the AKS managed cluster
   clusterVersion: 1.15.4
+  # (Required) DNS base domain to be used for the cluster's APIs (ex. example.com)
+  # This DNS zone must already exists in the cloud
   baseDomain: example.com
 
 azure:
+  # (Optional) The Agent Operating System disk size in GB
   agentOSDiskSizeGB: 30
+  # (Optional) The Operating System used for the Agents
   agentOSType: Linux
+  # (Required) The size of each VM in the Agent Pool (e.g. Standard_DS2_v2)
   agentVMSize: Standard_DS2_v2
+  # (Required) The location where the Managed Kubernetes Cluster should be created
   availabilityZone: francecentral
+  # (Required) the name of the SSH public key file to be provisioned from the secrets
+  # directory as the SSH key for the 'ubuntu' user."
   publicKey: ~/.ssh/id_rsa.pub
 
   ### Cluster size settings
 
-  # If enableAutoscaler is set to 'true', the cluster will be created with 1 node,
+  # (Required) If enableAutoscaler is set to 'true', the cluster will be created with 1 node,
   # and the value of agentCount will set the maximum possible nodes for the cluster.
   # If enableAutoscaler is *not* set (or set to 'false'), the cluster will be created with
   # as many nodes as defined in 'agentCount'
   agentCount: 5
+  # (Optional) Whether to enable auto-scaler
   enableAutoscaler: true

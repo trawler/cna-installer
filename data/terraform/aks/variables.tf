@@ -1,5 +1,5 @@
 variable "base_domain" {
-  description = "(Required) DNS base domain to be used for the cluster's APIs"
+  description = "(Required) DNS base domain to be used for the cluster's APIs (ex. example.com). This DNS zone must already exists in the cloud."
   type        = "string"
 }
 
@@ -33,7 +33,7 @@ variable "cluster_owner" {
 
 variable "public_key_file" {
   description = <<EOF
-(required) the name of the SSH public key file to be provisioned from the secrets directory
+(Required) the name of the SSH public key file to be provisioned from the secrets directory
 as the SSH key for the 'ubuntu' user."
 EOF
   type        = "string"
@@ -50,7 +50,6 @@ variable "agent_count" {
 the range of 1 to 100 (inclusive). Defaults to 1.
 EOF
   type        = "string"
-  default     = 1
 }
 
 variable "agent_os_type" {
