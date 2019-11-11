@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: 'Terraform Format 1'
-        uses: hashicorp/terraform-github-actions@v0.6.1
+        uses: hashicorp/terraform-github-actions@v0.3.8
         with:
           tf_actions_version: "$TF_ACTIONS_VERSION"
           tf_actions_subcommand: 'fmt'
@@ -26,7 +26,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Terraform Format 2'
-        uses: hashicorp/terraform-github-actions@v0.6.1
+        uses: hashicorp/terraform-github-actions@v0.3.8
         with:
           tf_actions_version: "$TF_ACTIONS_VERSION"
           tf_actions_subcommand: 'fmt'
@@ -36,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Terraform Init 1'
-        uses: hashicorp/terraform-github-actions@v0.6.1
+        uses: hashicorp/terraform-github-actions@v0.3.8
         with:
           tf_actions_version: "$TF_ACTIONS_VERSION"
           tf_actions_subcommand: 'init'
@@ -47,7 +47,7 @@ jobs:
           TF_CLI_ARGS_init: '-backend=false'
 
       - name: 'Terraform Init 2'
-        uses: hashicorp/terraform-github-actions@v0.6.1
+        uses: hashicorp/terraform-github-actions@v0.3.8
         with:
           tf_actions_version: "$TF_ACTIONS_VERSION"
           tf_actions_subcommand: 'init'
@@ -57,7 +57,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Terraform Validate 1'
-        uses: hashicorp/terraform-github-actions@v0.6.1
+        uses: hashicorp/terraform-github-actions@v0.3.8
         with:
           tf_actions_version: "$TF_ACTIONS_VERSION"
           tf_actions_subcommand: 'validate'
@@ -67,7 +67,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Terraform Validate 2'
-        uses: hashicorp/terraform-github-actions@v0.6.1
+        uses: hashicorp/terraform-github-actions@v0.3.8
         with:
           tf_actions_version: "$TF_ACTIONS_VERSION"
           tf_actions_subcommand: 'validate'
