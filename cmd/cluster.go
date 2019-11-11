@@ -47,6 +47,9 @@ func clusterCreate() {
 		fmt.Printf("\nERROR:\nfailed to run terraform:\n\n ")
 		log.Fatal(err)
 	}
+
+	// install k8s Assets
+	assetCreate()
 }
 
 func clusterDestroy() {
