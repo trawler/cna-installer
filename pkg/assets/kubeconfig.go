@@ -1,25 +1,11 @@
-package asset
+package assets
 
 import (
 	"fmt"
 
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
-
-// Client function accepts the location of Kubeconfig and returns a Kubernetes Clientset struct
-func Client(dir string) (*kubernetes.Clientset, error) {
-	kubeconfig, err := getKubeconfig(dir)
-	if err != nil {
-		return nil, fmt.Errorf("%v", err)
-	}
-	clientset, err := kubernetes.NewForConfig(kubeconfig)
-	if err != nil {
-		return nil, fmt.Errorf("%v", err)
-	}
-	return clientset, nil
-}
 
 func getKubeconfig(logDir string) (*rest.Config, error) {
 	kubeConfigPath := stringPtr(fmt.Sprintf("%s/generated/auth/kubeconfig", logDir))

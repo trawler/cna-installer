@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/trawler/cna-installer/pkg/asset"
+	"github.com/trawler/cna-installer/pkg/assets"
 )
 
 // createCmd represents the create command
 var assetCmd = &cobra.Command{
-	Use:   "asset",
+	Use:   "assets",
 	Short: "Manage Assets",
 	Long:  `Deploy or Dessroy Kubernetes addons on to the cluster`,
 }
@@ -32,11 +32,12 @@ var assetDestroyCmd = &cobra.Command{
 
 func assetCreate() {
 	fmt.Println("create deployment")
-	k8sClient, err := asset.Client(logDir)
+	k8sClient, err := assets.NewClient(logDir)
 	if err != nil {
 		fmt.Printf("%v", err)
 	}
-	fmt.Printf("k8sClient: %+v", k8sClient)
+
+	assets.Install(k8sClient)
 }
 
 func assetDestroy() {
