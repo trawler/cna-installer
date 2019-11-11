@@ -111,3 +111,22 @@ resource "local_file" "client_certificate" {
   content  = var.cluster_autoscaling ? azurerm_kubernetes_cluster.k8s-autoscaler[0].kube_config.0.client_certificate : azurerm_kubernetes_cluster.k8s[0].kube_config.0.client_certificate
   filename = "${path.cwd}/../logs/generated/auth/client.pem"
 }
+
+// Create Azure DNS
+data "azurerm_dns_zone" "base_domain" {
+  name = var.base_domain
+}
+
+resource "azurerm_dns_zone" "k8s" {
+  name                = local.cluster_fqdn
+  resource_group_name = azurerm_resource_group.k8s.name
+}
+
+resource "azurerm_dns_ns_record" "base_domain" {
+  name                = replace(local.cluster_fqdn, ".${var.base_domain}", "")
+  zone_name           = var.base_domain
+  resource_group_name = data.azurerm_dns_zone.base_domain.resource_group_name
+  ttl                 = 300
+
+  records = azurerm_dns_zone.k8s.name_servers
+}

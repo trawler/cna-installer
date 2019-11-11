@@ -87,13 +87,6 @@ func prepareTFRun() error {
 		cluster.TfConfigVars.ClusterOwner,
 	)
 
-	// set cluster domain to `cluster name`.`cluster owner`.`base domain`
-	cluster.TfConfigVars.BaseDomain = fmt.Sprintf("%s.%s.%s",
-		cluster.TfConfigVars.ClusterName,
-		cluster.TfConfigVars.ClusterOwner,
-		cluster.TfConfigVars.BaseDomain,
-	)
-
 	// set the azure agent's pool name
 	agentPoolName, err := sanitizeAgentPoolName(cluster.TfConfigVars.ClusterName, cluster.TfConfigVars.ClusterOwner)
 	if err != nil {
