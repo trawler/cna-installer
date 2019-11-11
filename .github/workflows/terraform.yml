@@ -10,7 +10,17 @@ jobs:
     name: 'Terraform Actions'
     runs-on: ubuntu-latest
     env:
-      TF_ACTIONS_VERSION: 0.12.9
+      TF_VAR_agent_pool_name: none
+      TF_VAR_agent_vm_size: 1
+      TF_VAR_az_location: francecentral
+      TF_VAR_azure_client_id: none
+      TF_VAR_azure_client_secret: none
+      TF_VAR_base_domain: example.com
+      TF_VAR_cluster_owner: myuser
+      TF_VAR_k8s_cluster_name: dev-cluster1
+      TF_VAR_k8s_resource_group_name: example
+      TF_VAR_public_key_file: ~/.ssh/id_rsa.pub
+
     steps:
       - name: 'Checkout'
         uses: actions/checkout@master
@@ -18,7 +28,7 @@ jobs:
       - name: 'Terraform Format 1'
         uses: hashicorp/terraform-github-actions@v0.6.1
         with:
-          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_version: 0.12.9
           tf_actions_subcommand: 'fmt'
           tf_actions_working_dir: 'data/terraform/aks'
           tf_actions_comment: true
@@ -28,7 +38,7 @@ jobs:
       - name: 'Terraform Format 2'
         uses: hashicorp/terraform-github-actions@v0.6.1
         with:
-          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_version: 0.12.9
           tf_actions_subcommand: 'fmt'
           tf_actions_working_dir: 'data/terraform/tf-backend'
           tf_actions_comment: true
@@ -38,7 +48,7 @@ jobs:
       - name: 'Terraform Init 1'
         uses: hashicorp/terraform-github-actions@v0.6.1
         with:
-          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_version: 0.12.9
           tf_actions_subcommand: 'init'
           tf_actions_working_dir: 'data/terraform/aks'
           tf_actions_comment: true
@@ -49,7 +59,7 @@ jobs:
       - name: 'Terraform Init 2'
         uses: hashicorp/terraform-github-actions@v0.6.1
         with:
-          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_version: 0.12.9
           tf_actions_subcommand: 'init'
           tf_actions_working_dir: 'data/terraform/tf-backend'
           tf_actions_comment: true
@@ -59,7 +69,7 @@ jobs:
       - name: 'Terraform Validate 1'
         uses: hashicorp/terraform-github-actions@v0.6.1
         with:
-          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_version: 0.12.9
           tf_actions_subcommand: 'validate'
           tf_actions_working_dir: 'data/terraform/aks'
           tf_actions_comment: true
@@ -69,7 +79,7 @@ jobs:
       - name: 'Terraform Validate 2'
         uses: hashicorp/terraform-github-actions@v0.6.1
         with:
-          tf_actions_version: "$TF_ACTIONS_VERSION"
+          tf_actions_version: 0.12.9
           tf_actions_subcommand: 'validate'
           tf_actions_working_dir: 'data/terraform/tf-backend'
           tf_actions_comment: true
