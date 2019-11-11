@@ -31,5 +31,3 @@ func CreateNamespace(k8sClient *kubernetes.Clientset, customNamespace string) er
 	fmt.Printf("Namespace %q created\n", customNamespace)
 	return nil
 }
-
-//nsSpec := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta}

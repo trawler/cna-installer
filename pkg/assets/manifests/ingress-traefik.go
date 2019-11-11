@@ -5,11 +5,14 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-// traefikPolicyRules are the policies to give to the Traefik Ingress
-var traefikClusterRoleName = "traefik-ingress-controller"
-var traefikClusterBindingRoleName = "traefik-ingress-controller"
-var namespace = "cna-installer"
+const (
+	namespace                     = "cna-installer"
+	serviceAccountName            = "traefik-ingress-controller"
+	traefikClusterBindingRoleName = "traefik-ingress-controller"
+	traefikClusterRoleName        = "traefik-ingress-controller"
+)
 
+// traefikPolicyRules are the policies to give to the Traefik Ingress
 var traefikPolicyRules = []rbacv1.PolicyRule{
 	{
 		APIGroups: []string{""},
@@ -23,7 +26,8 @@ var traefikPolicyRules = []rbacv1.PolicyRule{
 	},
 }
 
-func traefikClusterAuth(k8sClient *kubernetes.Clientset) {
+// InstallTraefikIngressController is a general function that holds all the tasks for Installing Traefik
+func InstallTraefikIngressController(k8sClient *kubernetes.Clientset) {
 	createClusterRole(k8sClient, traefikClusterRoleName, traefikPolicyRules)
 	createClusterRoleBinding(
 		k8sClient,
@@ -32,9 +36,5 @@ func traefikClusterAuth(k8sClient *kubernetes.Clientset) {
 		traefikClusterRoleName,
 		namespace,
 	)
-}
-
-// InstallTraefikIngressController is a general function that holds all the tasks for Installing Traefik
-func InstallTraefikIngressController(k8sClient *kubernetes.Clientset) {
-	traefikClusterAuth(k8sClient)
+	createServiceAccount(k8sClient, serviceAccountName, namespace)
 }
