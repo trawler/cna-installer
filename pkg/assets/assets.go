@@ -22,7 +22,12 @@ func NewClient(kubeconfigPath string) (*kubernetes.Clientset, error) {
 }
 
 // Install deploys all the required assets onto the cluster
-func Install(client *kubernetes.Clientset) {
-	manifests.CreateNamespace(client, "cna-installer")
-	manifests.InstallTraefikIngressController(client)
+func Install(client *kubernetes.Clientset) error {
+	if err := manifests.CreateNamespace(client, "cna-installer"); err != nil {
+		return fmt.Errorf("%v", err)
+	}
+	if err := manifests.InstallTraefikIngressController(client); err != nil {
+		return fmt.Errorf("%v", err)
+	}
+	return nil
 }

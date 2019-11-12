@@ -1,6 +1,8 @@
 package manifests
 
 import (
+	"fmt"
+
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -27,14 +29,27 @@ var traefikPolicyRules = []rbacv1.PolicyRule{
 }
 
 // InstallTraefikIngressController is a general function that holds all the tasks for Installing Traefik
-func InstallTraefikIngressController(k8sClient *kubernetes.Clientset) {
-	createClusterRole(k8sClient, traefikClusterRoleName, traefikPolicyRules)
-	createClusterRoleBinding(
+func InstallTraefikIngressController(k8sClient *kubernetes.Clientset) error {
+	// Create ClusterRole
+	if err := createClusterRole(k8sClient, traefikClusterRoleName, traefikPolicyRules); err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
+	// Create ClusterRoleBinding
+	err := createClusterRoleBinding(
 		k8sClient,
 		traefikClusterBindingRoleName,
 		traefikClusterRoleName,
 		traefikClusterRoleName,
 		namespace,
 	)
-	createServiceAccount(k8sClient, serviceAccountName, namespace)
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+
+	// Create ServiceAccount
+	if err := createServiceAccount(k8sClient, serviceAccountName, namespace); err != nil {
+		return fmt.Errorf("%v", err)
+	}
+	return nil
 }

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 	"github.com/trawler/cna-installer/pkg/assets"
@@ -31,13 +32,17 @@ var assetDestroyCmd = &cobra.Command{
 }
 
 func assetCreate() {
-	fmt.Println("create deployment")
 	k8sClient, err := assets.NewClient(logDir)
 	if err != nil {
-		fmt.Printf("%v", err)
+		fmt.Printf("\nERROR:\nfailed to initialize Kubernetes client:\n")
+		log.Fatal(err)
 	}
 
-	assets.Install(k8sClient)
+	err = assets.Install(k8sClient)
+	if err != nil {
+		fmt.Printf("\nERROR:\nfailed to install Kubernetes assets:\n")
+		log.Fatal(err)
+	}
 }
 
 func assetDestroy() {
