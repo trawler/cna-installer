@@ -15,13 +15,17 @@ func createClusterRole(
 	clusterRoleName string,
 	rules []rbacv1.PolicyRule,
 ) error {
+
+	labels := map[string]string{"app.kubernetes.io/instance": clusterRoleName}
+
 	clusterRole := rbacv1.ClusterRole{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "ClusterRole",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: clusterRoleName,
+			Name:   clusterRoleName,
+			Labels: labels,
 		},
 		Rules: rules,
 	}
@@ -51,13 +55,17 @@ func createClusterRoleBinding(
 	clusterRoleName string,
 	namespace string,
 ) error {
+
+	labels := map[string]string{"app.kubernetes.io/instance": clusterBindingRoleName}
+
 	roleBinding := rbacv1.ClusterRoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "rbac.authorization.k8s.io/v1",
 			Kind:       "ClusterRoleBinding",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: clusterBindingRoleName,
+			Name:   clusterBindingRoleName,
+			Labels: labels,
 		},
 		RoleRef: rbacv1.RoleRef{
 			APIGroup: "rbac.authorization.k8s.io",
@@ -72,14 +80,20 @@ func createClusterRoleBinding(
 			},
 		},
 	}
-	_, err := k8sClient.RbacV1().ClusterRoleBindings().Create(&roleBinding)
+
+	client := k8sClient.RbacV1().ClusterRoleBindings()
+	_, err := client.Create(&roleBinding)
 	if err != nil {
 		if !apierr.IsAlreadyExists(err) {
 			return fmt.Errorf("Failed to create ClusterRoleBinding %s: %v", clusterBindingRoleName, err)
 		}
-		fmt.Printf("ClusterRoleBinding %q already exists\n", clusterBindingRoleName)
-		return nil
+		_, err = client.Update(&roleBinding)
+		if err != nil {
+			return fmt.Errorf("Failed to update ClusterRoleBinding %q: %v", clusterBindingRoleName, err)
+		}
+		fmt.Printf("ClusterRoleBinding %q updated\n", clusterBindingRoleName)
+	} else {
+		fmt.Printf("ClusterRoleBinding %q created, bound %q to %q\n", clusterBindingRoleName, serviceAccountName, clusterRoleName)
 	}
-	fmt.Printf("ClusterRoleBinding %q created, bound %q to %q\n", clusterBindingRoleName, serviceAccountName, clusterRoleName)
 	return nil
 }
