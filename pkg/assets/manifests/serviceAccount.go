@@ -12,6 +12,7 @@ import (
 func createServiceAccount(k8sClient *kubernetes.Clientset,
 	serviceAccountName string,
 	customNamespace string) error {
+	labels := map[string]string{"app.kubernetes.io/instance": serviceAccountName}
 
 	serviceAccount := corev1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
@@ -20,18 +21,23 @@ func createServiceAccount(k8sClient *kubernetes.Clientset,
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      serviceAccountName,
 			Namespace: customNamespace,
+			Labels:    labels,
 		},
 	}
 
-	//_, err := k8sClient.CoreV1().Namespaces().Create(&namespace)
-	_, err := k8sClient.CoreV1().ServiceAccounts(customNamespace).Create(&serviceAccount)
+	client := k8sClient.CoreV1().ServiceAccounts(customNamespace)
+	_, err := client.Create(&serviceAccount)
 	if err != nil {
 		if !apierr.IsAlreadyExists(err) {
-			return fmt.Errorf("Failed to create ServiceAccount %s: %v", customNamespace, err)
+			return fmt.Errorf("Failed to create ServiceAccount %s: %v", serviceAccountName, err)
 		}
-		fmt.Printf("ServiceAccount %q already exists\n", serviceAccountName)
-		return nil
+		_, err = client.Update(&serviceAccount)
+		if err != nil {
+			return fmt.Errorf("Failed to update ServiceAccount %q: %v", serviceAccountName, err)
+		}
+		fmt.Printf("ServiceAccount %q updated\n", serviceAccountName)
+	} else {
+		fmt.Printf("ServiceAccount %q created\n", serviceAccountName)
 	}
-	fmt.Printf("ServiceAccount %q created\n", serviceAccountName)
 	return nil
 }
