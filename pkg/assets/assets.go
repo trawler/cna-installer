@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/trawler/cna-installer/pkg/assets/manifests"
+	"github.com/trawler/cna-installer/pkg/assets/manifests/utils"
+
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -23,7 +25,7 @@ func NewClient(kubeconfigPath string) (*kubernetes.Clientset, error) {
 
 // Install deploys all the required assets onto the cluster
 func Install(client *kubernetes.Clientset) error {
-	if err := manifests.CreateNamespace(client, "cna-installer"); err != nil {
+	if err := utils.CreateNamespace(client, "cna-installer"); err != nil {
 		return fmt.Errorf("%v", err)
 	}
 	if err := manifests.InstallTraefikIngressController(client); err != nil {

@@ -1,4 +1,4 @@
-package manifests
+package utils
 
 import (
 	"fmt"

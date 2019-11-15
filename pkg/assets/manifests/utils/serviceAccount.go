@@ -1,4 +1,4 @@
-package manifests
+package utils
 
 import (
 	"fmt"
@@ -9,10 +9,15 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func createServiceAccount(k8sClient *kubernetes.Clientset,
+// CreateServiceAccount comment
+func CreateServiceAccount(k8sClient *kubernetes.Clientset,
+	appName string,
 	serviceAccountName string,
 	customNamespace string) error {
-	labels := map[string]string{"app.kubernetes.io/instance": serviceAccountName}
+
+	labels := map[string]string{
+		"app": appName,
+	}
 
 	serviceAccount := corev1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
