@@ -1,4 +1,4 @@
-package manifests
+package utils
 
 import (
 	"fmt"
@@ -10,13 +10,21 @@ import (
 )
 
 // CreateClusterRole creates a k8s Cluster Role
-func createClusterRole(
+func CreateClusterRole(
 	k8sClient *kubernetes.Clientset,
+	appName string,
 	clusterRoleName string,
-	rules []rbacv1.PolicyRule,
+	rules []PolicyRule,
 ) error {
 
-	labels := map[string]string{"app.kubernetes.io/instance": clusterRoleName}
+	labels := map[string]string{
+		"app": appName,
+	}
+
+	rbacRules, err := generateRbacRules(rules)
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
 
 	clusterRole := rbacv1.ClusterRole{
 		TypeMeta: metav1.TypeMeta{
@@ -27,11 +35,11 @@ func createClusterRole(
 			Name:   clusterRoleName,
 			Labels: labels,
 		},
-		Rules: rules,
+		Rules: rbacRules,
 	}
 
 	client := k8sClient.RbacV1().ClusterRoles()
-	_, err := client.Create(&clusterRole)
+	_, err = client.Create(&clusterRole)
 	if err != nil {
 		if !apierr.IsAlreadyExists(err) {
 			return fmt.Errorf("Failed to create ClusterRole %q: %v", clusterRoleName, err)
@@ -48,15 +56,18 @@ func createClusterRole(
 }
 
 // CreateClusterRoleBinding creates a k8s Cluster Role Binding
-func createClusterRoleBinding(
+func CreateClusterRoleBinding(
 	k8sClient *kubernetes.Clientset,
+	appName string,
 	clusterBindingRoleName string,
 	serviceAccountName,
 	clusterRoleName string,
 	namespace string,
 ) error {
 
-	labels := map[string]string{"app.kubernetes.io/instance": clusterBindingRoleName}
+	labels := map[string]string{
+		"app": appName,
+	}
 
 	roleBinding := rbacv1.ClusterRoleBinding{
 		TypeMeta: metav1.TypeMeta{
