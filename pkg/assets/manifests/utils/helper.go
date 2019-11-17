@@ -46,6 +46,44 @@ func generateContainerSpec(containerSpec []ContainerSpec) ([]corev1.Container, e
 	return result, nil
 }
 
+// generateServicePorts takes a generic structure and returns it
+// as a corev1.ServicePort array
+func generateServicePorts(servicePorts []ServicePort) ([]corev1.ServicePort, error) {
+	var result []corev1.ServicePort
+
+	config := &mapstructure.DecoderConfig{
+		WeaklyTypedInput: true,
+		Result:           &result,
+	}
+	decoder, err := mapstructure.NewDecoder(config)
+	if err != nil {
+		return nil, fmt.Errorf("%v", err)
+	}
+	if err = decoder.Decode(servicePorts); err != nil {
+		return nil, fmt.Errorf("%v", err)
+	}
+	return result, nil
+}
+
+// generateServiceSpec takes a generic service structure and returns it
+// as a corev1.ServiceSpec array
+func generateServiceSpec(serviceSpec ServiceSpec) (*corev1.ServiceSpec, error) {
+	result := &corev1.ServiceSpec{}
+
+	config := &mapstructure.DecoderConfig{
+		WeaklyTypedInput: true,
+		Result:           &result,
+	}
+	decoder, err := mapstructure.NewDecoder(config)
+	if err != nil {
+		return nil, fmt.Errorf("%v", err)
+	}
+	if err = decoder.Decode(serviceSpec); err != nil {
+		return nil, fmt.Errorf("%v", err)
+	}
+	return result, nil
+}
+
 // ParseConfigData accepts a yaml string input and outputs it in a map[string][string] format
 func ParseConfigData(config string) (*ConfigMapData, error) {
 	t := ConfigMapData{}
