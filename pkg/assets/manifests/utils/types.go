@@ -1,5 +1,7 @@
 package utils
 
+import "k8s.io/apimachinery/pkg/util/intstr"
+
 // ConfigMapData points to the yaml contents of the Data field of the configMap
 type ConfigMapData struct {
 	Data map[string]string `yaml:"data"`
@@ -26,4 +28,24 @@ type PolicyRule struct {
 	Resources       []string
 	ResourceNames   []string
 	NonResourceURLs []string
+}
+
+// ServicePort struct
+type ServicePort struct {
+	Name       string
+	Port       int
+	Protocol   string
+	TargetPort intstr.IntOrString
+}
+
+// ServiceSpec struct
+type ServiceSpec struct {
+	Ports           []ServicePort
+	Protocol        string
+	Selector        map[string]string
+	SessionAffinity string
+
+	// ClusterIP / NodePort / LoadBalancer or ExternalName
+	// See: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+	Type string
 }
